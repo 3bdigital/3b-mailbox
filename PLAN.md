@@ -50,6 +50,15 @@ Three ways to use it:
 
 A demo mode with fake data loads with no sign-in, so people can try the UI first.
 
+### PWA or browser extension
+
+Decision (proposed): PWA first. A Chrome extension can come later as a thin wrapper that reuses `/app/js/core`.
+
+- Phones: Chrome on iPhone and Android has no extension support. Safari on iOS has extensions, but only through the App Store (Xcode build, Apple Developer Program fee). A PWA installs to the home screen on both.
+- OAuth: an extension still calls the same Gmail API with the same restricted scope, so the verification question stays the same. `chrome.identity.getAuthToken` is tied to one client ID in the manifest and works only in Chrome. Bring-your-own client ID needs `launchWebAuthFlow` instead.
+- Privacy: the Chrome Web Store dashboard shows install counts to the publisher. An unpacked or self-hosted PWA shows nothing.
+- What an extension does better: buttons inside Gmail itself, for example "make a filter from this email". That means reading Gmail's page structure, which Google changes often, so it needs constant upkeep.
+
 ### Settings storage
 
 No server storage. Recommendation: `localStorage` plus "export settings as a JSON file". I advise against a dummy filter (it shows in Gmail, counts against the 1,000 limit, has the length cap), a dummy signature (visible to recipients if selected), or a draft (needs the restricted `gmail.compose` scope and shows in Drafts on every device). If we need cross-device sync later, the safest Gmail-native option is a label-only marker, but I do not think we need it.
