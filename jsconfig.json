@@ -13,5 +13,11 @@
     "skipLibCheck": true,
     "types": []
   },
-  "include": ["site/app/js/core/**/*.js", "site/app/js/gmail/**/*.js", "site/app/js/types.js"]
+  "include": [
+    "site/app/js/core/**/*.js",
+    "site/app/js/gmail/**/*.js",
+    "site/app/js/types.js",
+    "site/app/js/ui/**/*.js",
+    "site/app/js/main.js"
+  ]
 }
