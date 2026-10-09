@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'"
+    />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Email Filter is a free, open-source and private filter manager for Gmail. It runs fully in your browser. Nobody else sees your data."
+    />
+    <title>Email Filter: a private filter manager for Gmail</title>
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/landing.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a class="brand" href="#top">
+          <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+            <rect class="mark-bg" width="64" height="64" rx="14" />
+            <path class="mark-fg" d="M14 18h36l-13 16v12l-10 5V34z" />
+          </svg>
+          <span>Email Filter</span>
+        </a>
+        <nav class="site-nav" aria-label="Sections">
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-privacy-works">Privacy</a></li>
+            <li><a href="#setup">Set up</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="wrap hero-inner">
+          <div class="hero-text">
+            <p class="eyebrow">Free and open source. For Gmail.</p>
+            <h1 id="hero-title">Clean up your Gmail filters. Keep your mail to yourself.</h1>
+            <p class="lead">
+              Email Filter shows all your Gmail filters in one clear view. It finds duplicates and
+              conflicts, merges filters that do the same job, and helps you make new ones. It runs
+              fully in your browser. Your data goes only between your browser and Google.
+            </p>
+            <ul class="hero-points">
+              <li>Free, with no account and no subscription</li>
+              <li>No server, no analytics, no cookies</li>
+              <li>Built to WCAG 2.2 AA, with AAA where we can</li>
+            </ul>
+            <div class="actions">
+              <a class="button button-primary" href="app/?demo">Try the demo</a>
+              <a class="button button-secondary" href="app/">Open the app</a>
+            </div>
+            <p class="small">
+              The demo uses made-up data. It does not connect to Google. To use your own Gmail,
+              <a href="#setup">set up your own client ID</a> first. This takes about 10 minutes.
+            </p>
+          </div>
+
+          <div class="hero-art">
+            <svg class="illustration" viewBox="0 0 480 380" aria-hidden="true" focusable="false">
+              <rect class="ill-panel" x="8" y="8" width="464" height="364" rx="28" />
+              <!-- Incoming mail -->
+              <g class="ill-mail">
+                <rect x="40" y="70" width="110" height="72" rx="10" />
+                <path d="M40 80l55 38 55-38" />
+                <rect x="52" y="160" width="110" height="72" rx="10" />
+                <path d="M52 170l55 38 55-38" />
+                <rect x="40" y="250" width="110" height="72" rx="10" />
+                <path d="M40 260l55 38 55-38" />
+              </g>
+              <!-- Filter -->
+              <g class="ill-flow">
+                <path d="M168 106c30 0 40 54 72 84" />
+                <path d="M178 196h62" />
+                <path d="M168 286c30 0 40 -54 72 -84" />
+              </g>
+              <path class="ill-filter" d="M232 140h56l-20 34v42l-16 10v-52z" />
+              <!-- Sorted trays -->
+              <g class="ill-flow">
+                <path d="M290 190c26 0 26 -84 52 -84" />
+                <path d="M290 196h52" />
+                <path d="M290 202c26 0 26 84 52 84" />
+              </g>
+              <g class="ill-tray">
+                <rect x="344" y="80" width="104" height="52" rx="12" />
+                <rect x="344" y="170" width="104" height="52" rx="12" />
+                <rect x="344" y="260" width="104" height="52" rx="12" />
+              </g>
+              <g class="ill-tag">
+                <rect x="358" y="98" width="52" height="16" rx="8" />
+                <rect x="358" y="188" width="70" height="16" rx="8" />
+                <rect x="358" y="278" width="40" height="16" rx="8" />
+              </g>
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="features" aria-labelledby="features-title">
+        <div class="wrap">
+          <h2 id="features-title">What it does</h2>
+          <p class="section-lead">
+            Gmail lets you keep up to 1,000 filters. Most people add them one at a time and never
+            look at them again. Email Filter helps you see and fix what you have.
+          </p>
+          <ul class="card-grid">
+            <li class="card">
+              <h3>See every filter clearly</h3>
+              <p>
+                Each filter gets a plain-English summary, for example "Mail from amazon.co.uk: skip
+                the inbox, apply label Receipts". Search, sort and group by label, action or sender.
+              </p>
+            </li>
+            <li class="card">
+              <h3>Find problems</h3>
+              <p>
+                The app finds duplicate filters, filters that conflict, labels that no longer exist
+                and forwarding addresses that are not verified. Filters that delete or forward mail
+                get a clear warning.
+              </p>
+            </li>
+            <li class="card">
+              <h3>Merge and tidy</h3>
+              <p>
+                Filters that do the same thing can become one filter. You see the result before
+                anything changes, and the app shows how many filters you save.
+              </p>
+            </li>
+            <li class="card">
+              <h3>Change many at once</h3>
+              <p>
+                Select many filters and change their label, add or remove an action, or delete them.
+                Every bulk change shows a preview first. An undo list keeps a copy of each filter
+                you delete.
+              </p>
+            </li>
+            <li class="card">
+              <h3>Make new filters easily</h3>
+              <p>
+                Use a simple form or write a Gmail search. A live counter shows how close you are to
+                the length limit. Ready-made suggestions cover receipts, newsletters, deliveries,
+                one-time codes and more.
+              </p>
+            </li>
+            <li class="card">
+              <h3>Stay inside the limits</h3>
+              <p>
+                The app knows the Gmail limits. It warns you at 80% and 95%, and it stops a change
+                that Gmail would refuse.
+              </p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section section-alt" id="how-privacy-works" aria-labelledby="hpw-title">
+        <div class="wrap split">
+          <div class="split-text">
+            <h2 id="hpw-title">How privacy works</h2>
+            <p>
+              Email Filter is a set of static files. When you open it, your browser downloads the
+              files and runs them. After that, the app talks only to Google.
+            </p>
+            <ol class="plain-list">
+              <li>
+                You create your own Google Cloud client ID. It belongs to you, in your own Google
+                Cloud project.
+              </li>
+              <li>
+                You sign in with Google. Google gives your browser a short-lived access token. The
+                token lasts about 1 hour. The app keeps it in memory only and never saves it.
+              </li>
+              <li>
+                Your browser asks the Gmail API for your filters and labels. The answers come back
+                to your browser only.
+              </li>
+              <li>
+                The maintainer has no server. The maintainer gets no data, no usage counts and no
+                error reports. Because the client ID is yours, the usage numbers show only in your
+                own Google Cloud console.
+              </li>
+            </ol>
+            <h3 id="permissions">Permissions, one step at a time</h3>
+            <p>
+              The app asks Google only for the permission that a feature needs, and only when you
+              turn that feature on.
+            </p>
+            <div class="table-fit">
+              <table>
+                <caption class="visually-hidden">
+                  Permission tiers and the Google scopes each one asks for
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Tier</th>
+                    <th scope="col">What it lets the app do</th>
+                    <th scope="col">Google scopes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Basic</th>
+                    <td>
+                      Read and change filters and labels. Read your list of forwarding addresses.
+                    </td>
+                    <td><code>gmail.settings.basic</code>, <code>gmail.labels</code></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Preview</th>
+                    <td>Show the mail that a filter matches (sender, subject and date).</td>
+                    <td>Basic, plus <code>gmail.readonly</code></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Apply</th>
+                    <td>Apply a filter to mail you already have.</td>
+                    <td>Preview, plus <code>gmail.modify</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <figure class="diagram">
+            <svg
+              viewBox="0 0 360 440"
+              role="img"
+              aria-labelledby="diagram-title diagram-desc"
+              focusable="false"
+            >
+              <title id="diagram-title">Where your data goes</title>
+              <desc id="diagram-desc">
+                Your browser and Google exchange data in both directions. There is no third box. The
+                maintainer has no server and receives nothing.
+              </desc>
+              <rect class="dg-box" x="20" y="20" width="320" height="104" rx="16" />
+              <text class="dg-heading" x="180" y="62" text-anchor="middle">Your browser</text>
+              <text class="dg-text" x="180" y="92" text-anchor="middle">
+                Email Filter runs here
+              </text>
+
+              <path class="dg-arrow" d="M150 134v118" />
+              <path class="dg-head" d="M140 144l10 -14 10 14z" />
+              <path class="dg-arrow" d="M210 134v118" />
+              <path class="dg-head" d="M200 242l10 14 10 -14z" />
+              <text class="dg-small" x="122" y="198" text-anchor="end">Answers</text>
+              <text class="dg-small" x="238" y="198">Requests</text>
+
+              <rect class="dg-box" x="20" y="262" width="320" height="104" rx="16" />
+              <text class="dg-heading" x="180" y="304" text-anchor="middle">Google</text>
+              <text class="dg-text" x="180" y="334" text-anchor="middle">
+                Sign-in and Gmail API
+              </text>
+
+              <text class="dg-note" x="180" y="414" text-anchor="middle">
+                Nothing else. No maintainer server.
+              </text>
+            </svg>
+            <figcaption>Data moves only between your browser and Google.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section" id="setup" aria-labelledby="setup-title">
+        <div class="wrap reading">
+          <h2 id="setup-title">Set up your own client ID</h2>
+          <p class="section-lead">
+            You need a Google Cloud OAuth client ID. It is free. You do not need a billing account.
+            Setup takes about 10 minutes, and you do it once.
+          </p>
+
+          <div class="callout callout-info">
+            <h3>Before you start</h3>
+            <ul>
+              <li>
+                Know the web address where you will use the app. You need its
+                <strong>origin</strong>: the scheme, the host and the port, if there is one. For
+                example <code>https://filters.example.com</code> or
+                <code>http://localhost:8080</code>. An origin has no path and no slash at the end.
+              </li>
+              <li>
+                Sign in to Google Cloud with the same Google account that you use for Gmail. This
+                makes the test-user step simple.
+              </li>
+              <li>
+                Google changes the Cloud console from time to time. If a label on your screen is
+                different, look for the nearest match.
+              </li>
+            </ul>
+          </div>
+
+          <h3 id="setup-personal">Personal Gmail account</h3>
+          <p>
+            Use these steps for an address that ends in <code>@gmail.com</code> or
+            <code>@googlemail.com</code>.
+          </p>
+          <ol class="steps">
+            <li>
+              <h4>Create a project</h4>
+              <p>
+                Go to <a href="https://console.cloud.google.com/">console.cloud.google.com</a>. Open
+                the project picker at the top of the page and select <strong>New project</strong>.
+                Give it a name, for example "Email Filter". Select <strong>Create</strong>, then
+                make sure the new project is selected.
+              </p>
+            </li>
+            <li>
+              <h4>Turn on the Gmail API</h4>
+              <p>
+                Go to <strong>APIs &amp; Services</strong>, then <strong>Library</strong>. Search
+                for "Gmail API", open it and select <strong>Enable</strong>.
+              </p>
+            </li>
+            <li>
+              <h4>Register your app with Google Auth Platform</h4>
+              <p>
+                Go to <strong>Google Auth Platform</strong> (search for it in the console search
+                bar). If you see <strong>Get started</strong>, select it. Google asks for:
+              </p>
+              <ul>
+                <li>
+                  <strong>App information</strong>: an app name that only you will see, for example
+                  "My mail filters", and a user support email (your own address). Do not put the
+                  word "Google" in the name.
+                </li>
+                <li><strong>Audience</strong>: select <strong>External</strong>.</li>
+                <li><strong>Contact information</strong>: your own email address.</li>
+                <li>
+                  <strong>Finish</strong>: agree to the Google API Services User Data Policy, then
+                  select <strong>Create</strong>.
+                </li>
+              </ul>
+              <p>
+                Google may also show a <strong>Branding</strong> page. You can leave the logo and
+                links empty for an app that only you use.
+              </p>
+            </li>
+            <li>
+              <h4>Add yourself as a test user</h4>
+              <p>
+                Go to <strong>Audience</strong>. Leave the publishing status at
+                <strong>Testing</strong>. Under <strong>Test users</strong>, select
+                <strong>Add users</strong>, enter your Gmail address and select
+                <strong>Save</strong>. Testing mode allows up to 100 test users, so you can add
+                family members too.
+              </p>
+            </li>
+            <li>
+              <h4>Optional: list the scopes</h4>
+              <p>
+                Go to <strong>Data access</strong> and select <strong>Add or remove scopes</strong>.
+                You can add <code>gmail.settings.basic</code> and <code>gmail.labels</code>, and
+                also <code>gmail.readonly</code> and <code>gmail.modify</code> if you plan to use
+                preview and apply. The app asks for each scope when it needs it, so this step only
+                makes the list visible in your console.
+              </p>
+            </li>
+            <li>
+              <h4>Create the client ID</h4>
+              <p>
+                Go to <strong>Clients</strong> and select <strong>Create client</strong>. Set
+                <strong>Application type</strong> to <strong>Web application</strong> and give it a
+                name. Under <strong>Authorized JavaScript origins</strong>, select
+                <strong>Add URI</strong> and enter the origin of the app, for example
+                <code>https://filters.example.com</code>. Leave
+                <strong>Authorized redirect URIs</strong> empty. Select <strong>Create</strong>.
+              </p>
+            </li>
+            <li>
+              <h4>Copy the client ID</h4>
+              <p>
+                Copy the <strong>Client ID</strong>. It ends in
+                <code>.apps.googleusercontent.com</code>. The app does not use the client secret. Do
+                not paste the secret anywhere.
+              </p>
+            </li>
+            <li>
+              <h4>Paste it into the app</h4>
+              <p>
+                Open the app, go to <strong>Set up</strong>, paste the client ID and select
+                <strong>Sign in with Google</strong>. Google shows a warning that it has not
+                verified the app. This is your own app, so it is safe to continue. Select
+                <strong>Continue</strong>, then tick the permissions you want to give.
+              </p>
+            </li>
+          </ol>
+
+          <h3 id="setup-workspace">Google Workspace account</h3>
+          <p>
+            Use these steps for a work or school address that your organisation manages with Google
+            Workspace. The steps are the same as for a personal account, with three differences.
+          </p>
+          <ol class="steps">
+            <li>
+              <h4>Create the project in your organisation</h4>
+              <p>
+                In the project picker, make sure the <strong>Organization</strong> or
+                <strong>Location</strong> is your Workspace organisation. If you cannot create a
+                project, ask your Workspace admin.
+              </p>
+            </li>
+            <li>
+              <h4>Set the audience to Internal</h4>
+              <p>
+                On the <strong>Audience</strong> step, select <strong>Internal</strong>. Only people
+                in your organisation can sign in. Google does not show the "unverified app" warning,
+                and the app needs no verification. You do not need to add test users.
+              </p>
+            </li>
+            <li>
+              <h4>Check your admin settings</h4>
+              <p>
+                Your admin can block apps from using Gmail data. If sign-in fails with an "access
+                blocked" message, ask your admin to trust your client ID in the Admin console API
+                controls. Your admin can also turn off automatic forwarding, so filters that forward
+                mail may not work.
+              </p>
+            </li>
+          </ol>
+
+          <h3 id="setup-mistakes">Common mistakes</h3>
+          <dl class="mistakes">
+            <div>
+              <dt>The origin has a path or a slash at the end</dt>
+              <dd>
+                Enter <code>https://filters.example.com</code>. Do not enter
+                <code>https://filters.example.com/</code> or
+                <code>https://filters.example.com/app/</code>. Google refuses a path, and the
+                sign-in fails with an "origin" error.
+              </dd>
+            </div>
+            <div>
+              <dt>The origin does not match exactly</dt>
+              <dd>
+                <code>http</code> and <code>https</code> are different origins. So are
+                <code>localhost</code> and <code>127.0.0.1</code>, and each port number. Add every
+                origin you use.
+              </dd>
+            </div>
+            <div>
+              <dt>You are not a test user</dt>
+              <dd>
+                For a personal account in Testing mode, Google blocks sign-in with an "access
+                denied" error until you add your address under <strong>Audience</strong>,
+                <strong>Test users</strong>.
+              </dd>
+            </div>
+            <div>
+              <dt>The Gmail API is not turned on</dt>
+              <dd>
+                Sign-in works, but the app shows an error that says the Gmail API is not used or is
+                disabled in your project. Go to <strong>APIs &amp; Services</strong>,
+                <strong>Library</strong> and enable it.
+              </dd>
+            </div>
+            <div>
+              <dt>The wrong Google account is signed in</dt>
+              <dd>
+                If you use more than one Google account, choose the one you added as a test user in
+                the Google sign-in window.
+              </dd>
+            </div>
+            <div>
+              <dt>The change has not taken effect yet</dt>
+              <dd>
+                Google can take from a few minutes to a few hours to apply a new origin. Wait, then
+                try again.
+              </dd>
+            </div>
+            <div>
+              <dt>The wrong client type</dt>
+              <dd>
+                The client must be a <strong>Web application</strong>. A Desktop, Android or iOS
+                client does not work in a browser.
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section class="section section-alt" id="faq" aria-labelledby="faq-title">
+        <div class="wrap reading">
+          <h2 id="faq-title">Questions and answers</h2>
+          <div class="faq">
+            <details>
+              <summary>Is it really free?</summary>
+              <p>
+                Yes. The app is free and open source. A Google Cloud project with the Gmail API
+                costs nothing at personal use levels, and you do not need to add a billing account.
+              </p>
+            </details>
+            <details>
+              <summary>Why must I make my own client ID?</summary>
+              <p>
+                The permission to manage Gmail filters is a restricted scope. A shared client ID for
+                many people would need a long Google review and maybe a paid security assessment.
+                Your own client ID needs none of that. It also means that nobody else, including the
+                maintainer, can see that you use the app.
+              </p>
+            </details>
+            <details>
+              <summary>Can the maintainer see my mail or my filters?</summary>
+              <p>
+                No. There is no server to send data to. The app loads no analytics, no fonts and no
+                scripts from other sites, except the Google sign-in script. The code is open, so you
+                or someone you trust can check it.
+              </p>
+            </details>
+            <details>
+              <summary>Why does Google say the app is not verified?</summary>
+              <p>
+                Google shows this warning for every app in Testing mode. The app here is the one you
+                made in your own Google Cloud project, so you are the developer. Workspace users who
+                set the audience to Internal do not see the warning.
+              </p>
+            </details>
+            <details>
+              <summary>Why must I sign in again after an hour?</summary>
+              <p>
+                Google access tokens last about 1 hour. The app does not ask for a long-lived
+                refresh token, so nothing long-lived exists to steal. The app warns you before the
+                token ends and lets you renew it without losing your work.
+              </p>
+            </details>
+            <details>
+              <summary>Will my client ID stop working after 7 days?</summary>
+              <p>
+                No. In Testing mode Google ends refresh tokens after 7 days. This app never gets a
+                refresh token, so the rule does not affect it. You sign in for each session.
+              </p>
+            </details>
+            <details>
+              <summary>Does the app change anything without asking?</summary>
+              <p>
+                No. Every change shows a preview first. Filters that delete or forward mail need an
+                extra confirmation. Before a bulk change, you can download a full backup.
+              </p>
+            </details>
+            <details>
+              <summary>Do new filters apply to mail I already have?</summary>
+              <p>
+                Not by default. A filter made through the Gmail API acts only on new mail. To apply
+                a filter to old mail, turn on the Apply tier. The app then asks Google for the extra
+                permission.
+              </p>
+            </details>
+            <details>
+              <summary>Does it work on a phone?</summary>
+              <p>
+                Yes. The app works in a mobile browser, and you can install it to your home screen.
+              </p>
+            </details>
+            <details>
+              <summary>Does it work with Outlook or other mail services?</summary>
+              <p>No. It works only with Gmail and Google Workspace mail.</p>
+            </details>
+            <details>
+              <summary>Is this a Google product?</summary>
+              <p>
+                No. Email Filter is an independent open-source project. Google does not make,
+                endorse or support it.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="privacy" aria-labelledby="privacy-title">
+        <div class="wrap reading prose">
+          <h2 id="privacy-title">Privacy policy</h2>
+          <p class="meta">Last updated: 9 October 2026</p>
+
+          <h3>Summary</h3>
+          <p>
+            Email Filter runs fully in your browser. It sends your data only to Google, and only to
+            do what you ask. The maintainer receives no data about you. There is no server, no
+            account, no analytics, no cookies and no tracking.
+          </p>
+
+          <h3>Who this policy covers</h3>
+          <p>
+            This policy covers the Email Filter app and this web page, in the copy that the
+            maintainer hosts and in the source code. If someone else hosts a copy, they are
+            responsible for their own host.
+          </p>
+
+          <h3>The data the app uses</h3>
+          <p>The app reads only what the permissions you give allow. It uses this data:</p>
+          <ul>
+            <li>
+              <strong>Basic tier</strong>: your Gmail filters, your labels and your list of
+              forwarding addresses. Filters can contain email addresses and words that you chose.
+            </li>
+            <li>
+              <strong>Preview tier</strong> (optional): the sender, subject and date of messages
+              that match a filter. The app does not read the body of a message.
+            </li>
+            <li>
+              <strong>Apply tier</strong> (optional): the IDs of messages that match a filter, so
+              the app can add or remove labels on them.
+            </li>
+          </ul>
+
+          <h3>Where the data goes</h3>
+          <p>
+            Your browser sends requests straight to Google at <code>accounts.google.com</code> (to
+            sign in) and <code>gmail.googleapis.com</code> (the Gmail API). Nothing goes through a
+            server of ours. We do not sell, share or transfer your data, because we never receive
+            it.
+          </p>
+
+          <h3>What the app stores on your device</h3>
+          <p>
+            The app uses your browser's local storage. This data stays on your device. It does not
+            leave your device, except in files that you choose to download.
+          </p>
+          <ul>
+            <li>Your client ID.</li>
+            <li>
+              Your settings, for example theme, density, hints you closed and the tier you want.
+            </li>
+            <li>
+              An undo list with copies of filters that the app deleted or replaced for you, so you
+              can restore them. These copies can contain email addresses and words from your
+              filters.
+            </li>
+          </ul>
+          <p>
+            The app never stores your access token. It keeps the token in memory, and the token goes
+            away when you close the tab or sign out. The app never stores message content.
+          </p>
+
+          <h3>How long we keep data</h3>
+          <p>
+            We keep nothing, because we receive nothing. The data on your device stays until you
+            delete it. To delete it, use <strong>Delete all local data</strong> in the app settings,
+            or clear the site data in your browser. The undo list keeps the last 200 entries and
+            removes older ones.
+          </p>
+
+          <h3>The web host</h3>
+          <p>
+            The company that serves the files, for example GitHub Pages, can record technical data
+            such as your IP address when your browser downloads the files. Every web server does
+            this. The host's own privacy policy covers these records. The maintainer does not use
+            them to identify or track people.
+          </p>
+
+          <h3>Google</h3>
+          <p>
+            The app loads the Google sign-in script from <code>accounts.google.com</code>. When you
+            sign in and use the Gmail API, the
+            <a href="https://policies.google.com/privacy">Google Privacy Policy</a> applies to what
+            Google does with that data.
+          </p>
+
+          <h3>Google API Services User Data Policy</h3>
+          <p>
+            Email Filter's use and transfer of information received from Google APIs to any other
+            app will adhere to the
+            <a href="https://developers.google.com/terms/api-services-user-data-policy"
+              >Google API Services User Data Policy</a
+            >, including the Limited Use requirements. In plain terms: the app uses Gmail data only
+            to show and manage your filters. It does not use the data for advertising. It does not
+            transfer the data to anyone. No person reads it.
+          </p>
+
+          <h3>How to remove access</h3>
+          <p>
+            Select <strong>Sign out</strong> in the app. This revokes the access token at Google.
+            You can also remove access at any time at
+            <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>.
+            To remove everything, delete the client ID or the whole project in your Google Cloud
+            console.
+          </p>
+
+          <h3>Children</h3>
+          <p>
+            The app is not for children under 13, or under the minimum age for a Google Account in
+            your country. We do not knowingly process data about children, and we receive no data at
+            all.
+          </p>
+
+          <h3>Changes to this policy</h3>
+          <p>
+            We will update the date at the top when this policy changes. The full history of every
+            change is public in the source code repository.
+          </p>
+
+          <h3>Contact</h3>
+          <p>
+            Ask a question or report a problem in
+            <a href="https://github.com/jackbremer/gmail-butler/issues">GitHub issues</a>. Do not
+            put email content or email addresses in an issue. For a security problem, use a
+            <a href="https://github.com/jackbremer/gmail-butler/security/advisories/new"
+              >private security report</a
+            >.
+          </p>
+        </div>
+      </section>
+
+      <section class="section section-alt" id="accessibility" aria-labelledby="a11y-title">
+        <div class="wrap reading prose">
+          <h2 id="a11y-title">Accessibility statement</h2>
+          <p class="meta">Last updated: 9 October 2026. Status: pre-release.</p>
+
+          <h3>Our target</h3>
+          <p>
+            We aim for full conformance with
+            <a href="https://www.w3.org/TR/WCAG22/">WCAG 2.2</a> at level AA. Where we can, we also
+            meet level AAA. For example:
+          </p>
+          <ul>
+            <li>Text contrast of at least 7:1 in light and dark themes.</li>
+            <li>Targets of at least 44 by 44 pixels.</li>
+            <li>No time limits that can lose your work. The app warns before your sign-in ends.</li>
+            <li>Plain English, short sentences and help text on each form.</li>
+          </ul>
+
+          <h3>What we support</h3>
+          <ul>
+            <li>Full keyboard use, with a visible focus outline and a skip link.</li>
+            <li>Screen readers, with landmarks, headings and live updates for progress.</li>
+            <li>Light and dark themes that follow your system setting.</li>
+            <li>Windows high contrast (forced colours) and the "more contrast" setting.</li>
+            <li>Reduced motion, zoom up to 400% and text spacing changes.</li>
+            <li>Status never shown by colour alone.</li>
+          </ul>
+
+          <h3>How we test</h3>
+          <ul>
+            <li>
+              Automated checks with axe-core in Playwright on every page and app state, on every
+              pull request.
+            </li>
+            <li>Keyboard-only checks of each task.</li>
+            <li>
+              Manual checks with VoiceOver (macOS and iOS), NVDA (Windows) and TalkBack (Android)
+              before each release.
+            </li>
+          </ul>
+
+          <h3>Known issues</h3>
+          <ul>
+            <li>
+              The app is pre-release. We have not finished manual screen reader tests for the first
+              release.
+            </li>
+            <li>
+              Google makes the sign-in window and the permission screens. We cannot change how they
+              work.
+            </li>
+            <li>
+              Google access tokens end after about 1 hour. We cannot make them longer. The app warns
+              you first and keeps your work.
+            </li>
+          </ul>
+
+          <h3>Tell us about a problem</h3>
+          <p>
+            If something is hard to use, please
+            <a href="https://github.com/jackbremer/gmail-butler/issues/new">open a GitHub issue</a>
+            and say that it is about accessibility. Tell us the page, what you tried to do, and the
+            browser and assistive technology you use. We aim to reply within 2 weeks.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="self-host" aria-labelledby="self-host-title">
+        <div class="wrap reading prose">
+          <h2 id="self-host-title">Host your own copy</h2>
+          <p>
+            Email Filter is static files with no build step. You can host the
+            <code>site/</code> folder on any static host that serves HTTPS, for example GitHub
+            Pages, Cloudflare Pages, Netlify or a home server.
+          </p>
+          <ul>
+            <li>
+              Give the app its own origin, for example a subdomain such as
+              <code>https://filters.example.com</code>. All GitHub Pages project sites under
+              <code>https://&lt;user&gt;.github.io</code> share one origin, so they share browser
+              storage. A custom domain or subdomain keeps the app on its own.
+            </li>
+            <li>
+              Add your origin to <strong>Authorized JavaScript origins</strong> on your client ID.
+            </li>
+            <li>
+              If your host lets you set headers, send a strict Content Security Policy. The source
+              code repository has an example.
+            </li>
+          </ul>
+
+          <h3>Run it on your computer</h3>
+          <p>You need Node.js 22 or later.</p>
+          <pre><code>git clone https://github.com/jackbremer/gmail-butler.git
+cd gmail-butler
+npm install
+npm run dev</code></pre>
+          <p>
+            The dev server picks a free port at random and prints the address. For sign-in you need
+            the same origin each time, so choose a fixed port:
+          </p>
+          <pre><code>npm run dev -- --port 8080</code></pre>
+          <p>
+            Then add <code>http://127.0.0.1:8080</code> as an authorised origin on your client ID,
+            and open that exact address.
+          </p>
+        </div>
+      </section>
+
+      <section class="section section-alt" id="licence" aria-labelledby="licence-title">
+        <div class="wrap reading prose">
+          <h2 id="licence-title">Licence and source code</h2>
+          <p>
+            Email Filter is free software under the
+            <a href="https://www.gnu.org/licenses/agpl-3.0.html"
+              >GNU Affero General Public Licence, version 3 only</a
+            >
+            (AGPL-3.0-only). You can use, study, change and share it. If you run a changed copy for
+            other people, you must give them its source code.
+          </p>
+          <p>
+            Read the code, report a problem or help at
+            <a href="https://github.com/jackbremer/gmail-butler"
+              >github.com/jackbremer/gmail-butler</a
+            >.
+          </p>
+          <h3 id="trademarks">Trademarks</h3>
+          <p>
+            Gmail, Google, Google Cloud and Google Workspace are trademarks of Google LLC. Email
+            Filter is an independent project. It is not made, endorsed or supported by Google.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap footer-inner">
+        <p>Email Filter. Free and open source under AGPL-3.0-only.</p>
+        <nav aria-label="Page sections">
+          <ul>
+            <li><a href="#setup">Setup guide</a></li>
+            <li><a href="#privacy">Privacy policy</a></li>
+            <li><a href="#accessibility">Accessibility</a></li>
+            <li><a href="#self-host">Self-hosting</a></li>
+            <li><a href="#licence">Licence</a></li>
+            <li><a href="https://github.com/jackbremer/gmail-butler">Source code</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>
