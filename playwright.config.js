@@ -2,6 +2,8 @@ import { defineConfig, devices } from '@playwright/test';
 
 // A random high port avoids clashes with other local projects.
 const port = Number(process.env.E2E_PORT) || 40000 + Math.floor(Math.random() * 20000);
+// Workers load this file again. Share the port so they reach the same server.
+process.env.E2E_PORT = String(port);
 const baseURL = `http://127.0.0.1:${port}`;
 
 // In environments with a pre-installed Chromium (for example a CI image), set CHROMIUM_PATH.
