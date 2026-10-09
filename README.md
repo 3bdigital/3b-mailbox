@@ -36,7 +36,7 @@ You can run the app in three ways:
 3. **Run it on your computer.**
 
    ```sh
-   git clone https://github.com/3b-digital/3b-mailbox.git
+   git clone https://github.com/3bdigital/3b-mailbox.git
    cd 3b-mailbox
    npm install
    npm run dev

@@ -225,7 +225,7 @@ Update (Jack, 2026-10-09, after reading Chrome Web Store reviews of a similar ex
 
 Update (Jack, 2026-10-09):
 
-15. Product name: **3B Mailbox**. GitHub owner `3b-digital`, repo `3b-mailbox`.
+15. Product name: **3B Mailbox**. GitHub owner `3bdigital` (3B Digital), repo `3b-mailbox`.
 16. Hosting: Cloudflare (3B Digital account), Worker `3b-mailbox-worker`, static assets only. Replaces GitHub Pages. Deploy is a manual GitHub workflow.
 
 ## 13. Further ideas

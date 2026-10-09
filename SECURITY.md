@@ -6,7 +6,7 @@ Do not open a public issue for a security problem.
 
 Report it through a GitHub private security advisory:
 
-1. Go to the [Security tab](https://github.com/3b-digital/3b-mailbox/security) of the repository.
+1. Go to the [Security tab](https://github.com/3bdigital/3b-mailbox/security) of the repository.
 2. Select **Report a vulnerability**.
 3. Describe the problem, the steps to reproduce it and the effect.
 
