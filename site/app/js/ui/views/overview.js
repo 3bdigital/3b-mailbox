@@ -163,6 +163,12 @@ export function render(ctx) {
                 value: longest,
                 max: LIMITS.criteriaCharsSafe,
                 level: lengthLevel,
+                levelText:
+                  lengthLevel === 'full'
+                    ? 'Too long for Gmail. Split it in Tidy up'
+                    : lengthLevel === 'danger'
+                      ? 'Over the safe length. Shorten or split it'
+                      : undefined,
                 valueText: `${longest.toLocaleString('en-GB')} of ${LIMITS.criteriaCharsSafe.toLocaleString('en-GB')} characters`,
               }),
             ),

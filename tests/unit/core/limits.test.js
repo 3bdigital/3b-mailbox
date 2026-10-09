@@ -107,7 +107,7 @@ describe('checkFilter', () => {
     expect(issues).toHaveLength(1);
     expect(issues[0]).toMatchObject({ code: 'unsafe-operator', severity: 'warning' });
     expect(issues[0].message).toBe(
-      'This filter uses label:, is:, has:userlabels. These never match new mail in a filter.',
+      'This filter uses "label:", "is:", "has:userlabels". These never match new mail in a filter.',
     );
   });
 

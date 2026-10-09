@@ -17,11 +17,12 @@ const LEVEL_TEXT = {
 
 /**
  * A labelled meter. Level is shown with colour, an icon and words.
- * @param {{label: string, value: number, max: number, level?: 'ok'|'warn'|'danger'|'full', valueText?: string, compact?: boolean, hint?: string}} opts
+ * @param {{label: string, value: number, max: number, level?: 'ok'|'warn'|'danger'|'full', valueText?: string, levelText?: string, compact?: boolean, hint?: string}} opts
  * @returns {HTMLElement}
  */
 export function meter(opts) {
   const level = opts.level ?? 'ok';
+  const levelText = opts.levelText ?? LEVEL_TEXT[level];
   const pct = Math.max(0, Math.min(100, (opts.value / Math.max(1, opts.max)) * 100));
   const labelId = nextId('meter');
   const valueText =
@@ -47,16 +48,16 @@ export function meter(opts) {
         'aria-valuemin': '0',
         'aria-valuemax': String(opts.max),
         'aria-valuenow': String(opts.value),
-        'aria-valuetext': `${valueText}${LEVEL_TEXT[level] ? `. ${LEVEL_TEXT[level]}` : ''}`,
+        'aria-valuetext': `${valueText}${levelText ? `. ${levelText}` : ''}`,
       },
       fill,
     ),
-    (LEVEL_TEXT[level] || opts.hint) &&
+    (levelText || opts.hint) &&
       h(
         'p',
         { class: 'meter-note' },
-        LEVEL_TEXT[level] && icon(level === 'warn' ? 'warning' : 'error', { size: 16 }),
-        h('span', { text: [LEVEL_TEXT[level], opts.hint].filter(Boolean).join('. ') }),
+        levelText && icon(level === 'warn' ? 'warning' : 'error', { size: 16 }),
+        h('span', { text: [levelText, opts.hint].filter(Boolean).join('. ') }),
       ),
   );
 }

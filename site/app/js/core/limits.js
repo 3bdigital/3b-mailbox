@@ -136,7 +136,7 @@ export function checkFilter(filter) {
       code: 'unsafe-operator',
       severity: 'warning',
       filterIds: ids,
-      message: `This filter uses ${unsafe.map((o) => `${o.includes(':') ? o : `${o}:`}`).join(', ')}. These never match new mail in a filter.`,
+      message: `This filter uses ${unsafe.map((o) => `"${o.includes(':') ? o : `${o}:`}"`).join(', ')}. These never match new mail in a filter.`,
       fix: 'Remove these search terms.',
     });
   }

@@ -10,7 +10,17 @@ Email Filter is an independent project. Google does not make, endorse or support
 
 ## Screenshots
 
-Screenshots will go here before the first release.
+These come from the built-in demo account. Open `app/?demo` to try it with no Google sign-in.
+
+| Overview                                                                                                                 | Filters (phone, dark)                                                           |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| ![Overview: filter counts, Gmail limits and a chart of what the filters do](docs/screenshots/overview-light-desktop.png) | ![Filter list on a phone in dark mode](docs/screenshots/filters-dark-phone.png) |
+
+| Edit a filter                                                                                                  | Tidy up                                                                                               |
+| -------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| ![Filter editor with a live plain-English summary and length meter](docs/screenshots/editor-light-desktop.png) | ![Tidy up: duplicates, conflicts and filters that can merge](docs/screenshots/tidy-light-desktop.png) |
+
+More in [docs/screenshots](docs/screenshots).
 
 ## Quick start
 
