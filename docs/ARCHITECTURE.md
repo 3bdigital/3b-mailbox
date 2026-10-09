@@ -47,11 +47,12 @@ Import paths are relative, with the `.js` extension, so they work in the browser
 Gmail search syntax parser and serialiser.
 
 - `tokenize(q: string): Token[]`
-- `parse(q: string): Node` where Node is one of `{type:'and', items}`, `{type:'or', items}` (from `OR`, `|` or `{...}`), `{type:'not', item}` (from `-`), `{type:'term', value, quoted:boolean}`, `{type:'op', name, value: Node|string}` (`from:`, `subject:(...)` ...), `{type:'group', item}` (parentheses).
+- `parse(q: string): Node` where Node is one of `{type:'and', items}`, `{type:'or', items}` (from `OR`, `|` or `{...}`), `{type:'not', item}` (from `-`), `{type:'term', value, quoted:boolean}`, `{type:'op', name, value: Node|string}` (`from:`, `subject:(...)` ...), `{type:'group', item}` (parentheses), `{type:'around', items:[a, b], distance}` (`a AROUND n b`). Or nodes from `{...}` carry `braces: true`. OR binds tighter than the implicit AND, as in Gmail.
 - `serialize(node: Node): string`
 - `OPERATORS`: array of `{name, description, example, filterSafe: boolean}`. `filterSafe:false` for operators that never match incoming mail in a filter: `label:`, `in:`, `is:`, `has:userlabels`, `has:nouserlabels`, `older_than:`, `newer_than:`, `older:`, `newer:`, `after:`, `before:`, `has:yellow-star` and other star types.
 - `findUnsafeOperators(q: string): string[]`
 - `orJoin(parts: string[]): string`: joins sub-queries with OR, adds brackets only where needed.
+- `canonicalize(node)`, `normaliseQuery(q): string`: canonical form (lower case, no redundant brackets, AND/OR items sorted and de-duplicated). Used by analyse and consolidate. `walk(node, fn)` visits every node.
 
 ### core/limits.js
 
@@ -94,7 +95,10 @@ Gmail search syntax parser and serialiser.
 - `planAddAction(filters, patch: Partial<FriendlyAction>): Plan` and `planRemoveAction(filters, keys: string[]): Plan`
 - `planEdit(previous: Filter, next: Filter): Plan`: one `replace` step.
 - `planCreate(filters: Filter[], labelsToCreate?: string[]): Plan`
-- Every planner checks `LIMITS` and throws `LimitError` (exported) when the plan would go over a hard limit.
+- Every planner checks `LIMITS` and throws `LimitError` (exported, with `code` `'too-many-filters'|'too-long'|'too-many-labels'`) when the plan would go over a hard limit.
+- Every planner takes a last optional `opts: {total?: number, labelCount?: number}` (filters and user labels in the account now). Because the executor creates before it deletes, the filter check is on the peak: `total + creates (+1 while a replace runs)`.
+- `PlanError` (exported) is thrown for a change that cannot make a valid filter: a filter with no id to change, or `planRemoveAction` leaving a filter with no action.
+- `makePlan(title, steps, opts)` (exported) builds and checks a plan; consolidate uses it too.
 
 ### core/templates.js
 
@@ -107,7 +111,7 @@ Gmail search syntax parser and serialiser.
 
 - `toJson(filters, labels): string`: versioned backup `{app:'email-filter', version:1, exportedAt, filters, labels}`.
 - `fromJson(text): {filters, labels}` with validation (throws `BackupError` with a plain message).
-- `toGmailXml(filters, labelsById): string`: Gmail `mailFilters.xml` format, for import in Gmail's own settings.
+- `toGmailXml(filters, labelsById, opts?: {now, author})`: Gmail `mailFilters.xml` format, for import in Gmail's own settings. Gmail XML has one `label` property per entry, so a filter with several labels becomes several entries with the same criteria (the first has the other actions too). Sizes are written in bytes (`sizeUnit` `s_sb`).
 
 ### core/storage.js
 
@@ -116,7 +120,7 @@ Gmail search syntax parser and serialiser.
 
 ### core/journal.js
 
-- `createJournal(store, max = 200)`: `{record(entry), list(), clear(), lastBatch()}`. An entry holds the plan title, time and the `previous` filters of every delete and replace, so the user can restore them.
+- `createJournal(store, max = 200, opts?: {now})`: `{record(entry), list(), clear(), lastBatch()}`. The executor records one entry per delete or replace step: `{batch, title, time, op: 'delete'|'replace', filterId, previous, replacement?}`. Entries from one `runPlan` call share `batch`. `list()` is newest first; `lastBatch()` returns every entry of the most recent batch in the order recorded. The oldest entries are dropped past `max`.
 
 ## gmail/
 
