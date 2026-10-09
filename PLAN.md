@@ -46,7 +46,7 @@ Three ways to use it:
 
 1. Bring your own client ID (recommended, maximum privacy). The user makes a free Google Cloud project, enables the Gmail API, creates an OAuth "Web application" client ID for their own origin, and pastes it into the app. For Workspace, they set the consent screen to "Internal", so there is no verification and no warning. For a personal Gmail, they keep "Testing" mode and add themselves as the only test user. Because GIS gives no refresh token, the 7-day refresh-token expiry does not affect us. We give a step-by-step guide with screenshots.
 2. Jack's hosted instance on GitHub Pages with Jack's client ID. This is easy for users, but `gmail.settings.basic` is restricted. Above 100 users, Google requires restricted-scope verification and possibly a paid security assessment (CASA). Google says the assessment applies to apps that access restricted data "from or through a third-party server". A browser-only app may be exempt, but we must confirm with Google. Also, the maintainer's Cloud console then shows user counts and API metrics (no identities, no mail content).
-3. Offline XML mode (no Google sign-in at all). The user exports `mailFilters.xml` from Gmail, opens it in the app, edits, consolidates, and downloads a new XML file to import. The app tells the user to delete the old filters first. Zero OAuth, zero network calls to Google. Good for a try-before-you-commit path.
+3. No sign-in mode (built; was "offline XML mode"). The user exports `mailFilters.xml` from Gmail, opens it in the app, edits, consolidates, and downloads a new XML file to import. The app tells the user to delete the old filters first. Zero OAuth, zero network calls to Google. Good for a try-before-you-commit path.
 
 Option 1 also works on Jack's hosted copy. The user adds Jack's site origin (for example `https://butler.example.com`) to "Authorized JavaScript origins" on their own client ID, then pastes the client ID into the app. Google ties the client to the user's own Cloud project, so Jack sees nothing in his Cloud console. The user must still trust the code that the hosted copy serves. To reduce that risk we publish tagged releases with checksums, and users can self-host the same files. Use a dedicated origin (custom subdomain), because every GitHub Pages project site under `jackbremer.github.io` shares one origin.
 
@@ -206,7 +206,7 @@ No server storage. Recommendation: `localStorage` plus "export settings as a JSO
 ## 12. Decisions (Jack, 2026-10-09)
 
 1. Access: bring your own client ID only. It works on the maintainer's hosted copy and on self-hosted copies.
-2. No offline XML mode. (XML export stays as a backup format.)
+2. No offline XML mode. (XML export stays as a backup format.) Changed later the same day: a "no sign-in" mode is in, because many people will not make a Cloud client ID or accept the unverified-app warning. See section 3, option 3.
 3. Promo site and app on one site, minimum pages: `index.html` (landing, setup guide, privacy, accessibility) and `app/`.
 4. Own design system (CSS tokens and native HTML). No component library.
 5. Matching-mail preview: yes, as an opt-in permission tier. The app explains each tier and asks Google for the extra scope only when the user turns the feature on. Tiers: basic (filters, labels, forwarding list), preview (adds `gmail.readonly`), apply to existing mail (adds `gmail.modify`). Verified: `gmail.metadata` cannot use the `q` search parameter, so preview needs `gmail.readonly`.
@@ -219,7 +219,6 @@ No server storage. Recommendation: `localStorage` plus "export settings as a JSO
 
 ## 13. Further ideas
 
-- Offline XML mode and demo mode (section 3).
 - "Explain this filter" and "why did this mail get filtered" tools.
 - Filter version history in a downloadable JSON file, with diff between snapshots.
 - Share filter templates as a URL fragment (data stays in the link, never on a server).

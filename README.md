@@ -24,10 +24,15 @@ More in [docs/screenshots](docs/screenshots).
 
 ## Quick start
 
-There are three ways to use Email Filter. All of them need your own Google Cloud OAuth client ID. It is free and takes about 10 minutes to make. See [Setup](#setup).
+You can use Email Filter with Google sign-in or without it.
+
+- **With sign-in**, changes go straight to Gmail, and you can see matching mail. You need your own Google Cloud OAuth client ID. It is free and takes about 10 minutes to make. See [Setup](#setup).
+- **Without sign-in**, you need no client ID and no Google permission. The app makes no network requests apart from loading its own files. See [No sign-in mode](#no-sign-in-mode).
+
+You can run the app in three ways:
 
 1. **Use the hosted copy.** Add the hosted copy's origin to your client ID, open the app and paste your client ID. The hosted copy is not live yet.
-2. **Host your own copy.** Publish the `site/` folder on any static host that serves HTTPS (GitHub Pages, Cloudflare Pages, Netlify, a home server). Give it its own origin, for example `https://filters.example.com`. All GitHub Pages project sites under `https://<user>.github.io` share one origin, so use a custom domain or subdomain.
+2. **Host your own copy.** Publish the `site/` folder on any static host that serves HTTPS (GitHub Pages, Cloudflare Pages, Netlify, a home server). Every link in the app is relative, so it works at any address: a custom domain or subdomain, a path on a shared host, or `localhost`. For sign-in, give it its own origin, for example `https://filters.example.com`, because sites that share an origin share browser storage.
 3. **Run it on your computer.**
 
    ```sh
@@ -40,6 +45,18 @@ There are three ways to use Email Filter. All of them need your own Google Cloud
    `npm run dev` picks a free port at random and prints the address. Google sign-in needs the same origin each time, so for sign-in use a fixed port: `npm run dev -- --port 8080`, then add `http://127.0.0.1:8080` to your client ID.
 
 To look around first, open the app with `?demo` (for example `http://127.0.0.1:8080/app/?demo`). The demo uses made-up data and does not connect to Google.
+
+## No sign-in mode
+
+Use this if you do not want to make a Google Cloud client ID or see Google's "unverified app" warning.
+
+1. In Gmail, open **Settings**, **See all settings**, **Filters and blocked addresses**. Select all your filters and choose **Export**. Your browser saves `mailFilters.xml`.
+2. Open the app and choose **Work without signing in**. Choose the file, or drag it onto the page.
+3. Use the app as normal: overview, filter list, editor, suggestions, tidy up, bulk changes and undo.
+4. Choose **Download for Gmail** to save the new file.
+5. In Gmail, select all your filters and delete them. Then choose **Import filters**, choose the new file and choose **Create filters**. Gmail import adds filters and never deletes them, so delete the old ones first.
+
+What you give up: the app cannot show matching mail or apply a filter to mail you already have. Gmail matches labels by name and makes any that are missing. Forwarding works only to addresses you have already verified in Gmail. Your changes stay in the browser tab until you download them. The app warns you before you close or reload the tab with changes you have not downloaded.
 
 ## Setup
 
@@ -57,6 +74,7 @@ In short:
 ## Privacy
 
 - The app runs in your browser. Data goes only between your browser and Google (`accounts.google.com` and `gmail.googleapis.com`).
+- In no sign-in mode the app reads only the file you choose. Nothing leaves the browser, and the app does not contact Google.
 - The access token lives in memory only. It lasts about 1 hour. The app uses the Google Identity Services token model, which never issues a refresh token.
 - Local storage holds only your client ID, your settings and an undo list of filters that you deleted. You can delete all of it in the app.
 - No server, no analytics, no cookies, no error reporting service, no external fonts.
