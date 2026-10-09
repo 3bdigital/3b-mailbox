@@ -43,6 +43,8 @@ test.describe('accessibility', () => {
       await page.getByRole('button', { name: 'More actions' }).click();
       await expect(page.getByRole('button', { name: 'Add an action' })).toBeVisible();
       await page.keyboard.press('Escape');
+      // Let the menu finish closing, so axe does not see it over the button.
+      await expect(page.getByRole('button', { name: 'Add an action' })).toBeHidden();
       expect(await axe(page)).toEqual([]);
       await page.getByRole('button', { name: 'Change label' }).click();
       await page.getByRole('combobox', { name: 'To this label' }).fill('fin');
@@ -204,7 +206,8 @@ test.describe('accessibility', () => {
     await expect(page.getByRole('region', { name: 'Selected filters' })).toContainText(
       '2 selected',
     );
-    await tabTo(page, page.getByRole('button', { name: 'Change label' }));
+    // The bulk bar sits above the list, so it is behind the focus in the tab order.
+    await tabTo(page, page.getByRole('button', { name: 'Change label' }), { key: 'Shift+Tab' });
     await page.keyboard.press('Enter');
     const dialog = page.getByRole('dialog');
     await tabTo(page, dialog.getByRole('combobox', { name: 'To this label' }));
