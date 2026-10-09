@@ -72,9 +72,7 @@ test.describe('signed in with Google (faked)', () => {
     await expect(page.getByRole('heading', { name: 'Sign in to see your filters' })).toBeVisible();
   });
 
-  test('a session ending soon shows a banner with Stay signed in', async ({
-    page,
-  }) => {
+  test('a session ending soon shows a banner with Stay signed in', async ({ page }) => {
     await fakeGoogle(page, 303);
     await page.goto('/app/#/filters');
     await page.getByRole('main').getByRole('button', { name: 'Sign in with Google' }).click();

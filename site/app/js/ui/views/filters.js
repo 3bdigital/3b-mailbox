@@ -208,10 +208,22 @@ export function render(ctx) {
   // Bulk bar
   const selectedCount = h('p', { class: 'bulk-count' });
   const deleteButton = button({ label: 'Delete', variant: 'danger', icon: 'trash', size: 'sm' });
+  const clearButton = button({
+    label: 'Clear',
+    variant: 'quiet',
+    size: 'sm',
+    class: 'bulk-clear',
+    ariaLabel: 'Clear selection',
+    onClick: () => {
+      setSelection(new Set());
+      search.focus();
+    },
+  });
   const bulkBar = h(
     'div',
     { class: 'bulk-bar', role: 'region', 'aria-label': 'Selected filters', hidden: true },
     selectedCount,
+    clearButton,
     h(
       'div',
       { class: 'bulk-actions' },
@@ -234,16 +246,6 @@ export function render(ctx) {
         ],
       }),
       deleteButton,
-      button({
-        label: 'Clear',
-        variant: 'quiet',
-        size: 'sm',
-        ariaLabel: 'Clear selection',
-        onClick: () => {
-          setSelection(new Set());
-          search.focus();
-        },
-      }),
     ),
   );
   deleteButton.addEventListener('click', () => {
@@ -276,7 +278,7 @@ export function render(ctx) {
     replace(
       deleteButton,
       icon('trash', { size: 16 }),
-      h('span', { text: `Delete ${plural(n, 'filter')}` }),
+      h('span', null, 'Delete', h('span', { class: 'wide-only', text: ` ${plural(n, 'filter')}` })),
     );
     const visibleSelected = visibleIds.filter((id) => sel.has(id)).length;
     selectAll.checked = visibleIds.length > 0 && visibleSelected === visibleIds.length;

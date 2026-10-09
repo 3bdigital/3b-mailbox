@@ -22,6 +22,12 @@
   --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5.5 7.75L10 12.25l4.5-4.5' fill='none' stroke='%23b8bdca' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
+@media (max-width: 44.99rem) {
+  :root {
+    --card-pad: var(--space-4);
+  }
+}
+
 :root[data-density='compact'] {
   --card-pad: var(--space-4);
   --stack-gap: var(--space-3);

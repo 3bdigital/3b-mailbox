@@ -1053,6 +1053,55 @@ body[data-mode='setup'] .app-main {
   gap: var(--space-2);
 }
 
+.bulk-clear {
+  order: 3;
+}
+
+@media (max-width: 44.99rem) {
+  .bulk-bar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    padding: var(--space-1) var(--space-2) var(--space-2) var(--space-3);
+    gap: 0 var(--space-2);
+  }
+
+  .bulk-bar:not([hidden]) {
+    display: grid;
+  }
+
+  .bulk-clear {
+    order: 0;
+  }
+
+  .bulk-actions {
+    grid-column: 1 / -1;
+    flex-wrap: nowrap;
+  }
+
+  .bulk-actions > * {
+    flex: 1 1 auto;
+  }
+
+  .bulk-actions .button {
+    width: 100%;
+    padding-inline: var(--space-2);
+  }
+
+  .bulk-actions .button > .icon {
+    display: none;
+  }
+
+  /* The count stays in the accessible name. It is only hidden from sight. */
+  .wide-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
 @media (min-width: 45rem) {
   .bulk-bar {
     bottom: var(--space-4);
