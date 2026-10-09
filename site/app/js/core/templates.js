@@ -1,3 +1,4 @@
+// @ts-check
 // Suggested filter catalogue. See docs/TEMPLATES.md for the research behind every template.
 //
 // This module is self-contained on purpose: it does not import other core modules.
