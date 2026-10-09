@@ -12,10 +12,10 @@ export const PREFS = Object.freeze({ motion: 'motion', shortcuts: 'shortcuts' })
 
 /**
  * @typedef {object} AppState
- * @property {'demo'|'google'|'setup'} mode
+ * @property {'demo'|'google'|'setup'|'file'} mode     'file' is no sign-in mode (a mailFilters.xml file).
  * @property {'idle'|'loading'|'ready'|'error'} status   Data status.
  * @property {string} error                               Plain English, when status is 'error'.
- * @property {'demo'|'signed-in'|'signed-out'|'expiring'|'expired'} auth
+ * @property {'demo'|'file'|'signed-in'|'signed-out'|'expiring'|'expired'} auth
  * @property {Filter[]} filters
  * @property {Label[]} labels
  * @property {Map<string, Label>} labelsById
@@ -24,6 +24,8 @@ export const PREFS = Object.freeze({ motion: 'motion', shortcuts: 'shortcuts' })
  * @property {Set<string>} selection                      Selected filter ids.
  * @property {boolean} online
  * @property {number} journalVersion                      Bumps when the undo journal changes.
+ * @property {boolean} fileDirty                          No sign-in mode: changed since the last download.
+ * @property {string} fileName                            No sign-in mode: the name of the file opened.
  */
 
 /**
@@ -44,6 +46,8 @@ export function createState(initial = {}) {
     selection: new Set(),
     online: true,
     journalVersion: 0,
+    fileDirty: false,
+    fileName: '',
     ...initial,
   };
   /** @type {Set<(state: AppState, changed: Set<string>) => void>} */

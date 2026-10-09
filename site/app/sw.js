@@ -45,6 +45,7 @@ const SHELL = [
   'js/ui/state.js',
   'js/ui/components/combobox.js',
   'js/ui/components/dialog.js',
+  'js/ui/components/download.js',
   'js/ui/components/filter-card.js',
   'js/ui/components/label-picker.js',
   'js/ui/components/matches.js',

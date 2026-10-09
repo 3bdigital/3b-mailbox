@@ -1,13 +1,16 @@
 // The app: shell, data source, session, banners, keyboard shortcuts and view switching.
 
 import { analyse } from '../core/analyse.js';
+import { fromGmailXml } from '../core/backup.js';
 import { createJournal } from '../core/journal.js';
 import { KEYS, createStore, memoryStorage } from '../core/storage.js';
 import { SCOPES, createAuth, validateClientId } from '../gmail/auth.js';
 import { createGmailClient } from '../gmail/client.js';
+import { contentKey, createFileAuth, createFileGmail } from '../gmail/file-source.js';
 import { createMockGmail, demoData } from '../gmail/mock.js';
 import { openDialog } from './components/dialog.js';
 import { announce, toast } from './components/toast.js';
+import { downloadDialog } from './components/download.js';
 import { button } from './components/widgets.js';
 import { h, replace } from './dom.js';
 import { icon } from './icons.js';
@@ -119,7 +122,7 @@ export function startApp(opts) {
   applyAppearance(prefs);
   const clientId = prefs.get(KEYS.clientId, '');
   const demo = opts.demo;
-  /** @type {'demo'|'google'|'setup'} */
+  /** @type {'demo'|'google'|'setup'|'file'} */
   const mode = demo ? 'demo' : validateClientId(clientId) ? 'google' : 'setup';
   const state = createState({
     mode,
@@ -138,10 +141,11 @@ export function startApp(opts) {
     api = createMockGmail({ ...bigDemo(opts.demoSize ?? 0), latencyMs: 150 });
   } else if (mode === 'google') {
     auth = createAuth({ clientId });
-    api = createGmailClient({ getToken: () => auth.getToken() });
   }
+  if (mode === 'google') api = createGmailClient({ getToken: () => auth.getToken() });
 
   const ctx = {
+    /** @type {'demo'|'google'|'setup'|'file'} Changes to 'file' when the user opens a filter file. */
     mode,
     demo,
     state,
@@ -150,22 +154,29 @@ export function startApp(opts) {
     api,
     auth,
     clientId,
+    /**
+     * No sign-in mode: the file the user opened, the original text and what the last download held.
+     * @type {null|{name: string, text: string, baseline: string, warnings: string[]}}
+     */
+    file: null,
     /** Unsaved editor input, kept in memory so a sign-in or route change never loses it. */
     drafts: new Map(),
     /** @param {string} hash */
     navigate: (hash) => router.navigate(hash),
+    /** True when a feature needs Google: matching mail, apply to existing mail, permissions. */
+    noSignIn: () => ctx.mode === 'file',
     canWrite() {
-      if (!api) return false;
-      if (demo) return true;
-      return Boolean(auth?.getToken()) && state.get().online;
+      if (!ctx.api) return false;
+      if (ctx.mode === 'demo' || ctx.mode === 'file') return true;
+      return Boolean(ctx.auth?.getToken()) && state.get().online;
     },
     /** @param {PermissionTier} [tier] */
     async signIn(tier) {
-      if (!auth) return false;
-      if (demo) return true;
+      if (!ctx.auth) return false;
+      if (ctx.mode !== 'google') return true;
       try {
         const wanted = tier ?? prefs.get(KEYS.tierWanted, 'basic');
-        await auth.signIn(SCOPES[wanted] ? wanted : 'basic');
+        await ctx.auth.signIn(SCOPES[wanted] ? wanted : 'basic');
         await ctx.reload();
         return true;
       } catch (err) {
@@ -174,8 +185,8 @@ export function startApp(opts) {
       }
     },
     async signOut() {
-      if (!auth || demo) return;
-      await auth.signOut();
+      if (!ctx.auth || ctx.mode !== 'google') return;
+      await ctx.auth.signOut();
       state.set({
         filters: [],
         labels: [],
@@ -189,34 +200,78 @@ export function startApp(opts) {
     },
     /** @param {{quiet?: boolean}} [o] */
     async reload(o = {}) {
-      if (!api || (!demo && !auth?.getToken())) {
+      if (!ctx.api || (ctx.mode === 'google' && !ctx.auth?.getToken())) {
         state.set({ status: 'idle' });
         return;
       }
       if (!o.quiet) state.set({ status: 'loading', error: '' });
       try {
         const [filters, labels, forwarding] = await Promise.all([
-          api.listFilters(),
-          api.listLabels(),
-          api.listForwardingAddresses(),
+          ctx.api.listFilters(),
+          ctx.api.listLabels(),
+          ctx.api.listForwardingAddresses(),
         ]);
         const ids = new Set(filters.map((f) => f.id));
         const selection = new Set([...state.get().selection].filter((id) => ids.has(id)));
+        const labelsById = new Map(labels.map((l) => [l.id, l]));
         state.set({
           status: 'ready',
           error: '',
           filters,
           labels,
-          labelsById: new Map(labels.map((l) => [l.id, l])),
+          labelsById,
           forwarding,
           issues: analyse({ filters, labels, forwardingAddresses: forwarding }),
           selection,
+          ...(ctx.file ? { fileDirty: contentKey(filters, labelsById) !== ctx.file.baseline } : {}),
         });
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
         if (o.quiet && state.get().status === 'ready') toast(message, { tone: 'danger' });
         else state.set({ status: 'error', error: message });
       }
+    },
+    /**
+     * Starts no sign-in mode with a mailFilters.xml file from Gmail. Throws BackupError.
+     * @param {string} text
+     * @param {string} name
+     */
+    async openFile(text, name) {
+      const parsed = fromGmailXml(text);
+      const fileApi = createFileGmail(parsed);
+      const [filters, labels] = await Promise.all([fileApi.listFilters(), fileApi.listLabels()]);
+      ctx.file = {
+        name,
+        text,
+        baseline: contentKey(filters, new Map(labels.map((l) => [l.id, l]))),
+        warnings: parsed.warnings,
+      };
+      ctx.mode = 'file';
+      ctx.api = fileApi;
+      ctx.auth = createFileAuth();
+      // Changes stay in this tab, so this mode has its own journal in memory.
+      ctx.journal = createJournal(createStore(memoryStorage(), 'file:'));
+      ctx.drafts.clear();
+      document.body.dataset.mode = 'file';
+      state.set({
+        mode: 'file',
+        auth: 'file',
+        selection: new Set(),
+        fileDirty: false,
+        fileName: name,
+        journalVersion: state.get().journalVersion + 1,
+      });
+      await ctx.reload();
+      return parsed;
+    },
+    /** Opens the "Download for Gmail" dialog with the steps to put the filters back. */
+    downloadForGmail: () => downloadDialog(ctx),
+    /** Records that the filters on screen are now downloaded. */
+    markDownloaded() {
+      if (!ctx.file) return;
+      const s = state.get();
+      ctx.file.baseline = contentKey(s.filters, s.labelsById);
+      state.set({ fileDirty: false });
     },
     onTierChange() {
       state.set({ journalVersion: state.get().journalVersion + 1 });
@@ -232,9 +287,21 @@ export function startApp(opts) {
       location.hash = '#/setup';
       location.reload();
     },
+    /** Leaves no sign-in mode and starts again. The beforeunload guard warns about changes. */
+    leaveMode() {
+      location.hash = '#/setup';
+      location.reload();
+    },
     applyAppearance: () => applyAppearance(prefs),
     showShortcuts,
   };
+
+  // Warn before the tab closes or reloads with changes that are not downloaded yet.
+  addEventListener('beforeunload', (event) => {
+    if (ctx.mode !== 'file' || !state.get().fileDirty) return;
+    event.preventDefault();
+    event.returnValue = '';
+  });
 
   setupShell(ctx);
 
@@ -245,9 +312,10 @@ export function startApp(opts) {
   const router = startRouter((route) => {
     let name = route.name;
     let redirect = '';
-    if (name === 'home' || name === 'not-found') redirect = mode === 'setup' ? 'setup' : 'overview';
-    else if (mode === 'setup' && name !== 'setup' && name !== 'settings') redirect = 'setup';
-    else if (mode !== 'setup' && name === 'setup' && mode === 'demo') redirect = 'overview';
+    const m = ctx.mode;
+    if (name === 'home' || name === 'not-found') redirect = m === 'setup' ? 'setup' : 'overview';
+    else if (m === 'setup' && name !== 'setup' && name !== 'settings') redirect = 'setup';
+    else if (name === 'setup' && m === 'demo') redirect = 'overview';
     if (redirect) {
       router.navigate(`#/${redirect}`, { replace: true });
       return;
@@ -291,6 +359,9 @@ function setupShell(ctx) {
     el.replaceWith(icon(/** @type {HTMLElement} */ (el).dataset.icon));
   }
   document.body.dataset.mode = state.get().mode;
+  state.subscribe((s, changed) => {
+    if (changed.has('mode')) document.body.dataset.mode = s.mode;
+  });
   // The skip link must not change the hash, because the hash is the route.
   document.getElementById('skip-link')?.addEventListener('click', (e) => {
     e.preventDefault();
@@ -302,6 +373,7 @@ function setupShell(ctx) {
 
   const STATUS = {
     demo: { text: 'Demo', icon: 'beaker', tone: 'info' },
+    file: { text: 'No sign-in', icon: 'upload', tone: 'info' },
     'signed-in': { text: 'Signed in', icon: 'success', tone: 'success' },
     'signed-out': { text: 'Signed out', icon: 'user', tone: 'neutral' },
     expiring: { text: 'Session ending soon', icon: 'clock', tone: 'warning' },
@@ -333,7 +405,7 @@ function setupShell(ctx) {
         h('span', { text: info.text }),
       ),
     );
-    if (s.mode === 'demo') {
+    if (s.mode === 'demo' || s.mode === 'file') {
       replace(authArea);
     } else if (s.auth === 'signed-in' || s.auth === 'expiring') {
       replace(
@@ -380,6 +452,7 @@ function setupShell(ctx) {
         ),
       );
     }
+    if (s.mode === 'file') items.push(fileBanner(ctx));
     if (!s.online) {
       items.push(
         h(
@@ -390,8 +463,8 @@ function setupShell(ctx) {
             'p',
             null,
             h('strong', { text: 'You are offline. ' }),
-            s.mode === 'demo'
-              ? 'The demo still works.'
+            s.mode === 'demo' || s.mode === 'file'
+              ? 'You can keep working. Nothing here needs the internet.'
               : 'You can look around, but Email Filter cannot reach Gmail until you are back online.',
           ),
         ),
@@ -446,11 +519,19 @@ function setupShell(ctx) {
   renderBanners();
   state.subscribe((_s, changed) => {
     if (changed.has('auth') || changed.has('mode')) renderStatus();
-    if (changed.has('auth') || changed.has('online')) renderBanners();
+    if (
+      changed.has('auth') ||
+      changed.has('online') ||
+      changed.has('mode') ||
+      changed.has('fileDirty') ||
+      changed.has('fileName')
+    ) {
+      renderBanners();
+    }
   });
 
   ctx.auth?.onChange?.((/** @type {any} */ e) => {
-    if (ctx.demo) return;
+    if (ctx.mode !== 'google') return;
     if (e.type === 'signed-in') state.set({ auth: 'signed-in' });
     else if (e.type === 'expiring') state.set({ auth: 'expiring' });
     else if (e.type === 'expired') state.set({ auth: 'expired' });
@@ -480,6 +561,71 @@ function setupShell(ctx) {
       showShortcuts();
     }
   });
+}
+
+/**
+ * The banner for no sign-in mode: changes stay in this tab until the user downloads them.
+ * @param {any} ctx
+ */
+function fileBanner(ctx) {
+  const s = ctx.state.get();
+  const warnings = ctx.file?.warnings ?? [];
+  return h(
+    'div',
+    { class: 'banner banner-info banner-file' },
+    icon('upload'),
+    h(
+      'p',
+      null,
+      h('strong', { text: 'No sign-in mode. ' }),
+      'Your changes stay in this tab until you download them. ',
+      s.fileDirty
+        ? h('span', { class: 'banner-state', text: 'You have changes to download.' })
+        : h('span', {
+            class: 'banner-state',
+            text: 'No changes since you opened or downloaded the file.',
+          }),
+      ' ',
+      h(
+        'a',
+        {
+          href: '../index.html#no-sign-in',
+          class: 'banner-link',
+          target: '_blank',
+          rel: 'noopener',
+        },
+        'How to put them back in Gmail',
+        h('span', { class: 'visually-hidden', text: ' (opens in a new tab)' }),
+      ),
+      ' ',
+      h('a', { href: '#/setup', class: 'banner-link', text: 'Change mode' }),
+    ),
+    button({
+      label: 'Download for Gmail',
+      variant: 'primary',
+      size: 'sm',
+      icon: 'download',
+      onClick: () => ctx.downloadForGmail(),
+    }),
+    warnings.length > 0 &&
+      h(
+        'details',
+        { class: 'details banner-details' },
+        h('summary', {
+          text: `${warnings.length === 1 ? '1 thing' : `${warnings.length} things`} in your file to check`,
+        }),
+        h(
+          'p',
+          { class: 'muted' },
+          'Email Filter could not keep these. Before you delete your filters in Gmail, note them down so you can set them up again.',
+        ),
+        h(
+          'ul',
+          { class: 'warning-list' },
+          warnings.map((w) => h('li', { text: w })),
+        ),
+      ),
+  );
 }
 
 /** The keyboard shortcuts dialog. */

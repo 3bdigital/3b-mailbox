@@ -5,6 +5,7 @@ import { BackupError, fromJson, toGmailXml, toJson } from '../../core/backup.js'
 import { LIMITS } from '../../core/limits.js';
 import { KEYS } from '../../core/storage.js';
 import { TIER_NAMES, validateClientId } from '../../gmail/auth.js';
+import { NEEDS_SIGN_IN } from '../../gmail/file-source.js';
 import { confirmDialog, openDialog } from '../components/dialog.js';
 import { TIER_EXPLAIN, ensureTier, scopeDetails } from '../components/permission.js';
 import { reviewAndRun } from '../components/plan-preview.js';
@@ -68,66 +69,86 @@ export function render(ctx) {
     spellcheck: false,
     mono: true,
   });
-  const clientSection = section(
-    'set-client',
-    'Google client ID',
-    'lock',
-    ctx.mode === 'demo' &&
-      notice({
-        tone: 'info',
-        text: 'You are in the demo. A client ID is only needed for your own Gmail.',
-      }),
-    h(
-      'form',
-      {
-        class: 'stack',
-        novalidate: true,
-        on: {
-          submit: (e) => {
-            e.preventDefault();
-            const v = clientField.input.value.trim();
-            if (!validateClientId(v)) {
-              clientField.setError(
-                'This is not a client ID. It ends with .apps.googleusercontent.com.',
-              );
-              clientField.input.focus();
-              return;
-            }
-            ctx.setClientId(v);
+  const noSignIn = ctx.mode === 'file';
+  /** A short note for a part of Settings that needs Google sign-in. */
+  const needsSignIn = () =>
+    notice({
+      tone: 'info',
+      title: NEEDS_SIGN_IN,
+      text: h(
+        'p',
+        null,
+        'You are in no sign-in mode. To sign in instead, ',
+        h('a', { href: '#/setup', text: 'change mode' }),
+        '.',
+      ),
+    });
+  const clientSection = noSignIn
+    ? section('set-client', 'Google client ID', 'lock', needsSignIn())
+    : clientIdSection();
+
+  function clientIdSection() {
+    return section(
+      'set-client',
+      'Google client ID',
+      'lock',
+      ctx.mode === 'demo' &&
+        notice({
+          tone: 'info',
+          text: 'You are in the demo. A client ID is only needed for your own Gmail.',
+        }),
+      h(
+        'form',
+        {
+          class: 'stack',
+          novalidate: true,
+          on: {
+            submit: (e) => {
+              e.preventDefault();
+              const v = clientField.input.value.trim();
+              if (!validateClientId(v)) {
+                clientField.setError(
+                  'This is not a client ID. It ends with .apps.googleusercontent.com.',
+                );
+                clientField.input.focus();
+                return;
+              }
+              ctx.setClientId(v);
+            },
           },
         },
-      },
-      clientField,
-      h('p', {
-        class: 'field-hint',
-        text: 'Add this address to "Authorised JavaScript origins" in Google Cloud:',
-      }),
-      originBox(),
-      h(
-        'div',
-        { class: 'button-row' },
-        button({ label: 'Save client ID', variant: 'primary', type: 'submit' }),
-        prefs.get(KEYS.clientId, '') &&
-          button({
-            label: 'Remove client ID',
-            variant: 'quiet',
-            onClick: async () => {
-              const ok = await confirmDialog({
-                title: 'Remove your client ID?',
-                message:
-                  'Email Filter forgets your client ID and signs you out. Your filters in Gmail do not change.',
-                confirmLabel: 'Remove client ID',
-                danger: true,
-              });
-              if (ok) {
-                await ctx.signOut?.();
-                ctx.clearClientId();
-              }
-            },
-          }),
+        clientField,
+        h('p', {
+          class: 'field-hint',
+          text: 'Add this address to "Authorised JavaScript origins" in Google Cloud:',
+        }),
+        originBox(),
+        h(
+          'div',
+          { class: 'button-row' },
+          button({ label: 'Save client ID', variant: 'primary', type: 'submit' }),
+          prefs.get(KEYS.clientId, '') &&
+            button({
+              label: 'Remove client ID',
+              variant: 'quiet',
+              onClick: async () => {
+                const ok = await confirmDialog({
+                  title: 'Remove your client ID?',
+                  message:
+                    'Email Filter forgets your client ID and signs you out. Your filters in Gmail do not change.',
+                  confirmLabel: 'Remove client ID',
+                  danger: true,
+                });
+                if (ok) {
+                  await ctx.signOut?.();
+                  ctx.clearClientId();
+                }
+              },
+            }),
+        ),
       ),
-    ),
-  );
+    );
+  }
 
   // ---- Permissions
   const permList = h('ul', { class: 'perm-list' });
@@ -212,10 +233,10 @@ export function render(ctx) {
       class: 'muted',
       text: 'Email Filter asks for the smallest permission it needs. Turn on more only when you want the feature.',
     }),
-    permList,
+    noSignIn ? needsSignIn() : permList,
     h(
       'p',
-      null,
+      { hidden: noSignIn },
       h(
         'a',
         {
@@ -347,6 +368,7 @@ export function render(ctx) {
         icon: 'download',
         onClick: () => {
           if (!ready()) return toast('Your filters are not loaded yet.', { tone: 'warning' });
+          if (noSignIn) return ctx.downloadForGmail();
           const s = ctx.state.get();
           download('mailFilters.xml', toGmailXml(s.filters, s.labelsById), 'application/xml');
           toast(`Downloaded ${plural(s.filters.length, 'filter')} for Gmail.`, { tone: 'success' });
@@ -452,20 +474,25 @@ export function render(ctx) {
     'Diagnostics',
     'beaker',
     h('h3', { class: 'subhead', text: 'Measure the filter length limit' }),
-    h('p', {
-      text: `Google does not publish the longest filter it accepts. Email Filter assumes ${LIMITS.criteriaCharsHard.toLocaleString('en-GB')} characters and keeps each filter under ${LIMITS.criteriaCharsSafe.toLocaleString('en-GB')}. This test finds the real limit for your account.`,
-    }),
-    h('p', {
-      class: 'muted',
-      text: `It makes and deletes about 22 test filters with the label ${PROBE_LABEL}. It takes about a minute. The label stays, so you can delete it in Gmail afterwards.`,
-    }),
-    button({
-      label: 'Measure the limit',
-      icon: 'beaker',
-      onClick: () => measure(ctx, measureResult),
-    }),
-    measureResult,
+    ...(noSignIn ? [needsSignIn()] : probeParts()),
   );
+  function probeParts() {
+    return [
+      h('p', {
+        text: `Google does not publish the longest filter it accepts. Email Filter assumes ${LIMITS.criteriaCharsHard.toLocaleString('en-GB')} characters and keeps each filter under ${LIMITS.criteriaCharsSafe.toLocaleString('en-GB')}. This test finds the real limit for your account.`,
+      }),
+      h('p', {
+        class: 'muted',
+        text: `It makes and deletes about 22 test filters with the label ${PROBE_LABEL}. It takes about a minute. The label stays, so you can delete it in Gmail afterwards.`,
+      }),
+      button({
+        label: 'Measure the limit',
+        icon: 'beaker',
+        onClick: () => measure(ctx, measureResult),
+      }),
+      measureResult,
+    ];
+  }
 
   // ---- Local data
   const dataSection = section(

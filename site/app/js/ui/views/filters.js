@@ -632,6 +632,7 @@ export function render(ctx) {
           selected: s.selection.has(f.id),
           onToggle,
           onAction,
+          noSignIn: ctx.mode === 'file',
         });
         if (ui.group !== 'none') {
           const input = card.querySelector('.card-check');
