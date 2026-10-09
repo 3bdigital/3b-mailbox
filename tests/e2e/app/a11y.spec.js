@@ -141,7 +141,7 @@ test.describe('accessibility', () => {
     expect(foreign).toEqual([]);
   });
 
-  test('no console errors on any route', async ({ page }) => {
+  test('no console errors on any route', async ({ page, browserName }) => {
     /** @type {string[]} */
     const errors = [];
     page.on('console', (msg) => {
@@ -151,7 +151,18 @@ test.describe('accessibility', () => {
     });
     page.on('pageerror', (err) => errors.push(err.message));
     for (const route of ROUTES) await openDemo(page, route);
-    expect(errors).toEqual([]);
+    // Playwright's Linux WebKit reports one "Refused to apply a stylesheet" per native <select>,
+    // with no source line (":0"). The count matches the selects on each route, and the app adds
+    // no inline styles, so the stylesheet is the browser's own. Only that exact message is ignored.
+    const real = errors.filter(
+      (e) =>
+        !(
+          browserName === 'webkit' &&
+          e.startsWith('Refused to apply a stylesheet because its hash') &&
+          /:0\)$/.test(e)
+        ),
+    );
+    expect(real).toEqual([]);
   });
 
   test('keyboard only: create a filter', async ({ page }) => {

@@ -90,3 +90,9 @@ Run this on a personal Gmail account and on a Workspace account before each rele
 | G6  | Import a file with a new nested label, for example `zz-3bm-test/new/child`.                 | Gmail creates the labels.                                                                        |
 | G7  | Import a file with a category (`smartLabelToApply`) and a size in bytes (`s_sb`).           | Gmail accepts both.                                                                              |
 | G8  | Import a file that forwards to an address that is not verified.                             | Record what Gmail does.                                                                          |
+
+## H. Real Safari checks
+
+| #   | Step                                                                             | Expected result                                                                                                      |
+| --- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| H1  | Safari on Mac and iPhone: open Filters and the filter editor, use each dropdown. | Dropdowns look and work like the rest of the app. Note any "Refused to apply a stylesheet" message in Web Inspector. |
