@@ -250,6 +250,80 @@ test.describe('demo flows', () => {
   });
 });
 
+test.describe('more settings and editor flows', () => {
+  test('also apply to existing mail: explain, grant, count, then change old mail', async ({
+    page,
+  }) => {
+    await openDemo(page, 'filters/new');
+    await page.getByLabel('From', { exact: true }).fill('github.com');
+    await page.getByLabel('Star it').check();
+    await page.getByLabel('Also apply to existing mail').check();
+    const ask = page.getByRole('dialog', { name: /Apply filters to existing mail/ });
+    await expect(ask).toContainText('optional');
+    await ask.getByRole('button', { name: 'Allow in the demo' }).click();
+    await expect(page.locator('.apply-existing')).toContainText(/\d+ emails? match now/);
+    await page.getByRole('button', { name: 'Create filter' }).click();
+    await expect(page.getByRole('dialog')).toContainText('It also changes the mail you have now');
+    await confirmPlan(page, 'Create filter');
+    await expect(page.getByRole('dialog')).toContainText(/existing emails? changed/);
+  });
+
+  test('restore a JSON backup through the plan preview', async ({ page }) => {
+    await openDemo(page, 'settings');
+    const backup = {
+      app: 'email-filter',
+      version: 1,
+      exportedAt: '2026-10-01T09:00:00.000Z',
+      filters: [{ criteria: { from: 'restored@example.com' }, action: { addLabelIds: ['L9'] } }],
+      labels: [{ id: 'L9', name: 'Restored', type: 'user' }],
+    };
+    await page.getByLabel('Restore from a JSON backup').setInputFiles({
+      name: 'backup.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify(backup)),
+    });
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toContainText('Make the label');
+    await confirmPlan(page, 'Restore 1 filter from a backup');
+    await closeDialog(page);
+    expect(await filterCount(page)).toBe(67);
+  });
+
+  test('a backup that is not valid shows a plain message', async ({ page }) => {
+    await openDemo(page, 'settings');
+    await page.getByLabel('Restore from a JSON backup').setInputFiles({
+      name: 'bad.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from('not json'),
+    });
+    await expect(page.locator('#section-set-backup')).toContainText('It is not JSON');
+  });
+
+  test('measure the criteria length limit, and clean up', async ({ page }) => {
+    test.setTimeout(60000);
+    await openDemo(page, 'settings');
+    await page.getByRole('button', { name: 'Measure the limit' }).click();
+    await page.getByRole('dialog').getByRole('button', { name: 'Start the test' }).click();
+    await expect(page.locator('#section-set-diag')).toContainText('1,469 characters', {
+      timeout: 30000,
+    });
+    await expect(page.locator('#section-set-diag')).toContainText('All test filters are deleted');
+    expect(await filterCount(page)).toBe(66);
+  });
+
+  test('turning a permission on and off in settings', async ({ page }) => {
+    await openDemo(page, 'settings');
+    const preview = page.getByRole('switch', { name: 'Preview matching mail' });
+    await expect(preview).not.toBeChecked();
+    await preview.check();
+    await page.getByRole('dialog').getByRole('button', { name: 'Allow in the demo' }).click();
+    await expect(preview).toBeChecked();
+    await preview.uncheck();
+    await expect(preview).not.toBeChecked();
+    await expect(page.getByRole('switch', { name: 'Manage filters' })).toBeDisabled();
+  });
+});
+
 test.describe('a full account', () => {
   test('1,000 filters stay quick to show and search', async ({ page }) => {
     await page.goto('/app/?demo&size=1000#/filters');
