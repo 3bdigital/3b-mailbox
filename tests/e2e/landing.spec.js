@@ -77,6 +77,35 @@ test.describe('landing page', () => {
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
   });
 
+  test('offers no sign-in mode with its steps and trade-offs', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('#top').getByRole('link', { name: 'use it without signing in' }).click();
+    await expect(page).toHaveURL(/#no-sign-in$/);
+    const section = page.locator('#no-sign-in');
+    await expect(section.getByRole('heading', { level: 2 })).toHaveText(
+      'Use it without signing in',
+    );
+    await expect(section.locator('ol > li')).toHaveCount(5);
+    await expect(section).toContainText('never deletes them');
+    await expect(section).toContainText('cannot show the mail that a filter matches');
+    await expect(section.getByRole('link', { name: 'Open the setup page' })).toHaveAttribute(
+      'href',
+      'app/#/setup',
+    );
+  });
+
+  test('links to its own pages are relative, so any address works', async ({ page }) => {
+    for (const path of ['/', '/app/']) {
+      await page.goto(path);
+      const bad = await page.evaluate(() =>
+        [...document.querySelectorAll('[href], [src]')]
+          .map((el) => el.getAttribute('href') ?? el.getAttribute('src') ?? '')
+          .filter((u) => (u.startsWith('/') && !u.startsWith('//')) || /github\.io/.test(u)),
+      );
+      expect(bad).toEqual([]);
+    }
+  });
+
   test('makes no requests to any other origin', async ({ page, baseURL }) => {
     const origin = new URL(/** @type {string} */ (baseURL)).origin;
     /** @type {string[]} */
