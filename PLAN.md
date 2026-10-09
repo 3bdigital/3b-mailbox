@@ -48,6 +48,8 @@ Three ways to use it:
 2. Jack's hosted instance on GitHub Pages with Jack's client ID. This is easy for users, but `gmail.settings.basic` is restricted. Above 100 users, Google requires restricted-scope verification and possibly a paid security assessment (CASA). Google says the assessment applies to apps that access restricted data "from or through a third-party server". A browser-only app may be exempt, but we must confirm with Google. Also, the maintainer's Cloud console then shows user counts and API metrics (no identities, no mail content).
 3. Offline XML mode (no Google sign-in at all). The user exports `mailFilters.xml` from Gmail, opens it in the app, edits, consolidates, and downloads a new XML file to import. The app tells the user to delete the old filters first. Zero OAuth, zero network calls to Google. Good for a try-before-you-commit path.
 
+Option 1 also works on Jack's hosted copy. The user adds Jack's site origin (for example `https://butler.example.com`) to "Authorized JavaScript origins" on their own client ID, then pastes the client ID into the app. Google ties the client to the user's own Cloud project, so Jack sees nothing in his Cloud console. The user must still trust the code that the hosted copy serves. To reduce that risk we publish tagged releases with checksums, and users can self-host the same files. Use a dedicated origin (custom subdomain), because every GitHub Pages project site under `jackbremer.github.io` shares one origin.
+
 A demo mode with fake data loads with no sign-in, so people can try the UI first.
 
 ### PWA or browser extension
