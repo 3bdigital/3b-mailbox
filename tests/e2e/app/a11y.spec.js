@@ -1,3 +1,4 @@
+import { measureOverflow } from './overflow.js';
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { AXE_TAGS, ROUTES, openDemo, tabTo } from './helpers.js';
@@ -100,11 +101,8 @@ test.describe('accessibility', () => {
     test(`no horizontal scroll at 320px: ${route}`, async ({ page }) => {
       await page.setViewportSize({ width: 320, height: 700 });
       await openDemo(page, route);
-      const { scrollWidth, clientWidth } = await page.evaluate(() => ({
-        scrollWidth: document.documentElement.scrollWidth,
-        clientWidth: document.documentElement.clientWidth,
-      }));
-      expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
+      const { scrollWidth, clientWidth, culprits } = await measureOverflow(page);
+      expect(scrollWidth, culprits.join('\n')).toBeLessThanOrEqual(clientWidth);
     });
   }
 
@@ -118,11 +116,8 @@ test.describe('accessibility', () => {
       content:
         '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; } p { margin-bottom: 2em !important; }',
     });
-    const { scrollWidth, clientWidth } = await page.evaluate(() => ({
-      scrollWidth: document.documentElement.scrollWidth,
-      clientWidth: document.documentElement.clientWidth,
-    }));
-    expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
+    const { scrollWidth, clientWidth, culprits } = await measureOverflow(page);
+    expect(scrollWidth, culprits.join('\n')).toBeLessThanOrEqual(clientWidth);
     await context.close();
   });
 
@@ -149,7 +144,11 @@ test.describe('accessibility', () => {
   test('no console errors on any route', async ({ page }) => {
     /** @type {string[]} */
     const errors = [];
-    page.on('console', (msg) => msg.type() === 'error' && errors.push(msg.text()));
+    page.on('console', (msg) => {
+      if (msg.type() !== 'error') return;
+      const { url, lineNumber } = msg.location();
+      errors.push(`${msg.text()} (${url || 'no url'}:${lineNumber ?? '?'})`);
+    });
     page.on('pageerror', (err) => errors.push(err.message));
     for (const route of ROUTES) await openDemo(page, route);
     expect(errors).toEqual([]);

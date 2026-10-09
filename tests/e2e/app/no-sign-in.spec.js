@@ -1,3 +1,4 @@
+import { measureOverflow } from './overflow.js';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { test, expect } from '@playwright/test';
@@ -253,11 +254,8 @@ test.describe('no sign-in mode', () => {
         await expect(page).toHaveURL(new RegExp(`#/${route}$`));
       }
       await expect(page.locator('h1')).toBeVisible();
-      const { scrollWidth, clientWidth } = await page.evaluate(() => ({
-        scrollWidth: document.documentElement.scrollWidth,
-        clientWidth: document.documentElement.clientWidth,
-      }));
-      expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
+      const { scrollWidth, clientWidth, culprits } = await measureOverflow(page);
+      expect(scrollWidth, culprits.join('\n')).toBeLessThanOrEqual(clientWidth);
     });
   }
 });

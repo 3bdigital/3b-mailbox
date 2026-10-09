@@ -24,9 +24,10 @@
   top: 0;
   z-index: 20;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-2) var(--space-3);
   min-height: var(--header-h);
   padding: var(--space-2) max(var(--space-4), env(safe-area-inset-right)) var(--space-2)
     max(var(--space-4), env(safe-area-inset-left));
@@ -72,9 +73,12 @@
 
 .header-end {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--space-2);
   min-width: 0;
+  margin-inline-start: auto;
 }
 
 .status-pill {
@@ -1419,11 +1423,13 @@ body[data-mode='setup'] .app-main {
 
 .mini-filters {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-1);
 }
 
 .mini-filter {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.1rem;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-md);
@@ -1478,6 +1484,7 @@ a.mini-when {
 
 .before-after {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-3);
   align-items: start;
 }
@@ -1920,4 +1927,11 @@ a.mini-when {
   .skip-link {
     display: none;
   }
+}
+
+/* Filter titles are links: give them a full-size touch target. */
+.filter-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
 }
