@@ -1,0 +1,13 @@
+# Security headers for Cloudflare static assets. Content rules for scripts, styles and
+# connections live in each page's CSP meta tag, so they also apply on any other host.
+/*
+  Content-Security-Policy: frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()
+  Strict-Transport-Security: max-age=31536000
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+  X-Frame-Options: DENY
+
+/app/sw.js
+  Cache-Control: no-cache

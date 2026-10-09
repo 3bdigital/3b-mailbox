@@ -344,7 +344,7 @@ export function render(ctx) {
       title: 'Choose one filter to duplicate',
       size: 'sm',
       content: h('p', {
-        text: 'Gmail does not allow two filters that are exactly the same. Email Filter opens the copy so you can change it before you save. Select one filter, then choose Duplicate.',
+        text: 'Gmail does not allow two filters that are exactly the same. 3B Mailbox opens the copy so you can change it before you save. Select one filter, then choose Duplicate.',
       }),
       footer: close,
     });
@@ -355,7 +355,7 @@ export function render(ctx) {
     const s = ctx.state.get();
     const list = selectedFilters();
     download(
-      `email-filter-backup-${new Date().toISOString().slice(0, 10)}.json`,
+      `3b-mailbox-backup-${new Date().toISOString().slice(0, 10)}.json`,
       toJson(list, s.labels),
       'application/json',
     );

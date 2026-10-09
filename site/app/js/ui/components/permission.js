@@ -17,12 +17,12 @@ export const TIER_EXPLAIN = {
   ],
   preview: [
     'Search your mail to show which emails a filter would catch.',
-    'Email Filter shows the sender, subject and date of up to 25 emails, only on this screen.',
+    '3B Mailbox shows the sender, subject and date of up to 25 emails, only on this screen.',
     'It does not keep your mail or send it anywhere.',
   ],
   apply: [
     'Add or remove labels on emails you already have, so a new filter can also sort old mail.',
-    'Email Filter does this only when you tick "Also apply to existing mail" and confirm.',
+    '3B Mailbox does this only when you tick "Also apply to existing mail" and confirm.',
   ],
 };
 
@@ -83,7 +83,7 @@ export function ensureTier(ctx, tier, opts = {}) {
     description: opts.why,
     size: 'md',
     content: [
-      h('p', { text: 'This extra permission lets Email Filter:' }),
+      h('p', { text: 'This extra permission lets 3B Mailbox:' }),
       h(
         'ul',
         { class: 'tick-list' },

@@ -463,7 +463,7 @@ function editorForm(ctx, s, o) {
     onChange: async (v) => {
       if (v) {
         const ok = await ensureTier(ctx, 'apply', {
-          why: 'To change mail you already have, Email Filter needs permission to change labels on your mail.',
+          why: 'To change mail you already have, 3B Mailbox needs permission to change labels on your mail.',
         });
         if (!ok) {
           apply.input.checked = false;

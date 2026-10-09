@@ -174,7 +174,7 @@ export function render(ctx) {
             ),
             h('p', {
               class: 'card-note',
-              text: 'Gmail allows 1,000 filters. A filter stops working at about 1,469 characters, so Email Filter keeps each one under 1,400.',
+              text: 'Gmail allows 1,000 filters. A filter stops working at about 1,469 characters, so 3B Mailbox keeps each one under 1,400.',
             }),
           ),
           h(
@@ -257,7 +257,7 @@ export function render(ctx) {
           batches.length === 0
             ? h('p', {
                 class: 'muted',
-                text: 'No changes yet. When you change or delete filters, Email Filter keeps a copy here so you can undo it.',
+                text: 'No changes yet. When you change or delete filters, 3B Mailbox keeps a copy here so you can undo it.',
               })
             : h(
                 'ul',

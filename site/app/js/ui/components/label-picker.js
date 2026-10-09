@@ -116,7 +116,7 @@ export function labelPicker(opts) {
           value: `new:${clean}`,
           description: reserved
             ? 'Gmail keeps this name for itself. Choose another name.'
-            : 'Email Filter makes it when you save.',
+            : '3B Mailbox makes it when you save.',
           disabled: reserved,
           swatch: undefined,
         });

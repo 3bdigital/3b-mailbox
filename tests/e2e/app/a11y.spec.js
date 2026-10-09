@@ -61,7 +61,7 @@ test.describe('accessibility', () => {
 
   test('axe: setup page with no client ID', async ({ page }) => {
     await page.goto('/app/#/setup');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Set up Email Filter');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Set up 3B Mailbox');
     expect(await axe(page)).toEqual([]);
   });
 
@@ -79,7 +79,7 @@ test.describe('accessibility', () => {
         .getByRole('link', { name: link })
         .click();
       await expect(page.getByRole('heading', { level: 1, name: title })).toBeFocused();
-      await expect(page).toHaveTitle(`${title} - Email Filter`);
+      await expect(page).toHaveTitle(`${title} - 3B Mailbox`);
       await expect(
         page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: link }),
       ).toHaveAttribute('aria-current', 'page');

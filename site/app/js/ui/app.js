@@ -329,7 +329,7 @@ export function startApp(opts) {
     const rendered = view.render(ctx, route.params);
     currentView = rendered;
     replace(viewRoot, rendered.el);
-    document.title = `${rendered.title} - Email Filter`;
+    document.title = `${rendered.title} - 3B Mailbox`;
     for (const link of document.querySelectorAll('.nav-link')) {
       const target = /** @type {HTMLElement} */ (link).dataset.route;
       const active = target === name || (target === 'filters' && name === 'editor');
@@ -465,7 +465,7 @@ function setupShell(ctx) {
             h('strong', { text: 'You are offline. ' }),
             s.mode === 'demo' || s.mode === 'file'
               ? 'You can keep working. Nothing here needs the internet.'
-              : 'You can look around, but Email Filter cannot reach Gmail until you are back online.',
+              : 'You can look around, but 3B Mailbox cannot reach Gmail until you are back online.',
           ),
         ),
       );
@@ -617,7 +617,7 @@ function fileBanner(ctx) {
         h(
           'p',
           { class: 'muted' },
-          'Email Filter could not keep these. Before you delete your filters in Gmail, note them down so you can set them up again.',
+          '3B Mailbox could not keep these. Before you delete your filters in Gmail, note them down so you can set them up again.',
         ),
         h(
           'ul',

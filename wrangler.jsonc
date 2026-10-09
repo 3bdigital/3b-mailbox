@@ -1,0 +1,17 @@
+// Cloudflare Worker that serves the static site in site/. There is no Worker script:
+// Cloudflare serves the files directly, so no code runs on the server and nothing is logged by us.
+// Deploy: the "Deploy to Cloudflare" GitHub workflow (manual), or `npx wrangler@4 deploy`.
+{
+  "name": "3b-mailbox-worker",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./site",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+  },
+  "workers_dev": true,
+  "preview_urls": false,
+  // Add the custom domain when it is chosen. Google sign-in needs one fixed origin, so pick it
+  // before anyone creates a client ID.
+  // "routes": [{ "pattern": "mailbox.example.com", "custom_domain": true }],
+}

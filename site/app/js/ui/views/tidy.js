@@ -107,7 +107,7 @@ export function render(ctx) {
             onClick: () =>
               run(() => planDedupe(list, { total }), {
                 intro:
-                  'Email Filter keeps one of them and deletes the rest. They all do the same thing.',
+                  '3B Mailbox keeps one of them and deletes the rest. They all do the same thing.',
               }),
           });
         }
@@ -289,7 +289,7 @@ export function render(ctx) {
           icon: 'success',
           tone: 'success',
           title: 'Everything is tidy',
-          text: 'Email Filter found no problems and nothing to merge.',
+          text: '3B Mailbox found no problems and nothing to merge.',
         });
       }
       return [

@@ -12,7 +12,7 @@ const CLIENT_ID = '123456789012-abc123def.apps.googleusercontent.com';
 async function fakeGoogle(page, expiresIn) {
   await page.addInitScript(
     ({ clientId, expiresIn: seconds }) => {
-      localStorage.setItem('ef:clientId', JSON.stringify(clientId));
+      localStorage.setItem('3bm:clientId', JSON.stringify(clientId));
       /** @type {any} */ (window).google = {
         accounts: {
           oauth2: {

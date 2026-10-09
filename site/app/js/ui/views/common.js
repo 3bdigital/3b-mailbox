@@ -36,10 +36,10 @@ export function dataGate(ctx, opts) {
         emptyState({
           tone: 'danger',
           icon: s.online ? 'error' : 'wifiOff',
-          title: s.online ? 'Email Filter could not load your filters' : 'You are offline',
+          title: s.online ? '3B Mailbox could not load your filters' : 'You are offline',
           text: s.online
             ? s.error
-            : 'Email Filter needs the internet to reach Gmail. Your data is safe. Try again when you are back online.',
+            : '3B Mailbox needs the internet to reach Gmail. Your data is safe. Try again when you are back online.',
           actions: [
             button({
               label: 'Try again',
@@ -56,7 +56,7 @@ export function dataGate(ctx, opts) {
         emptyState({
           icon: 'lock',
           title: 'Sign in to see your filters',
-          text: 'Email Filter asks Google for permission to manage your filters. Your data goes only between this browser and Google.',
+          text: '3B Mailbox asks Google for permission to manage your filters. Your data goes only between this browser and Google.',
           actions: [
             button({
               label: 'Sign in with Google',

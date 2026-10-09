@@ -27,7 +27,7 @@ describe('createStore', () => {
     const s = createStore(backend);
     expect(s.persistent).toBe(true);
     expect(s.set('theme', { mode: 'dark' })).toBe(true);
-    expect(backend.getItem('ef:theme')).toBe('{"mode":"dark"}');
+    expect(backend.getItem('3bm:theme')).toBe('{"mode":"dark"}');
     expect(s.get('theme')).toEqual({ mode: 'dark' });
     expect(s.get('missing', 'x')).toBe('x');
     s.remove('theme');
@@ -36,7 +36,7 @@ describe('createStore', () => {
 
   it('returns the fallback for values that are not JSON', () => {
     const backend = memoryStorage();
-    backend.setItem('ef:bad', '{nope');
+    backend.setItem('3bm:bad', '{nope');
     expect(createStore(backend).get('bad', 7)).toBe(7);
   });
 
@@ -105,7 +105,7 @@ describe('createStore', () => {
     const s = createStore();
     expect(s.persistent).toBe(true);
     s.set('k', 1);
-    expect(globalThis.localStorage.getItem('ef:k')).toBe('1');
+    expect(globalThis.localStorage.getItem('3bm:k')).toBe('1');
     vi.unstubAllGlobals();
 
     Object.defineProperty(globalThis, 'localStorage', { configurable: true, get: thrower });

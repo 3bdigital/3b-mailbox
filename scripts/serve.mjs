@@ -44,5 +44,5 @@ const server = createServer(async (req, res) => {
 
 server.listen(port, '127.0.0.1', () => {
   const { port: actual } = /** @type {import('node:net').AddressInfo} */ (server.address());
-  console.warn(`Email Filter dev server: http://127.0.0.1:${actual}/`);
+  console.warn(`3B Mailbox dev server: http://127.0.0.1:${actual}/`);
 });

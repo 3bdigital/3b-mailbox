@@ -25,7 +25,7 @@ export async function showMatches(ctx, criteria) {
     return;
   }
   const ok = await ensureTier(ctx, 'preview', {
-    why: 'To show which emails this filter catches, Email Filter needs to search your mail.',
+    why: 'To show which emails this filter catches, 3B Mailbox needs to search your mail.',
   });
   if (!ok) return;
   const q = criteriaToSearch(criteria);

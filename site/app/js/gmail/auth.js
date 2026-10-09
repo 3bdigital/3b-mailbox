@@ -169,7 +169,7 @@ function tokenResponseError(code) {
   if (code === 'access_denied') {
     return new AuthError(
       'access-denied',
-      'You did not give Email Filter permission to use your Gmail. Sign in again and allow access.',
+      'You did not give 3B Mailbox permission to use your Gmail. Sign in again and allow access.',
     );
   }
   if (code === 'invalid_client' || code === 'unauthorized_client') {
@@ -329,7 +329,7 @@ export function createAuth(options) {
               fail(
                 new AuthError(
                   'missing-scopes',
-                  `Email Filter needs the permission ${names}. Sign in again and tick that box on the Google screen.`,
+                  `3B Mailbox needs the permission ${names}. Sign in again and tick that box on the Google screen.`,
                   { missingScopes: missing },
                 ),
               );

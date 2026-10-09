@@ -2,7 +2,16 @@ import js from '@eslint/js';
 import globals from 'globals';
 
 export default [
-  { ignores: ['.claude/', 'node_modules/', 'coverage/', 'test-results/', 'playwright-report/'] },
+  {
+    ignores: [
+      '.claude/',
+      '.wrangler/',
+      'node_modules/',
+      'coverage/',
+      'test-results/',
+      'playwright-report/',
+    ],
+  },
   js.configs.recommended,
   {
     files: ['site/**/*.js'],

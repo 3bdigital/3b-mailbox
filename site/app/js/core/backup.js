@@ -8,7 +8,7 @@ import { toApi, toFriendly } from './actions.js';
 /** @typedef {import('../types.js').FilterAction} FilterAction */
 /** @typedef {import('../types.js').Label} Label */
 
-export const BACKUP_APP = 'email-filter';
+export const BACKUP_APP = '3b-mailbox';
 export const BACKUP_VERSION = 1;
 
 /** Thrown when a backup file cannot be read. The message is plain English. */
@@ -128,11 +128,11 @@ export function fromJson(text) {
     throw new BackupError('This file is not a valid backup. It is not JSON.');
   }
   if (!isObject(data) || data.app !== BACKUP_APP) {
-    throw new BackupError('This file is not an Email Filter backup.');
+    throw new BackupError('This file is not a 3B Mailbox backup.');
   }
   if (typeof data.version !== 'number' || data.version > BACKUP_VERSION || data.version < 1) {
     throw new BackupError(
-      'This backup is from a newer version of Email Filter. Update the app and try again.',
+      'This backup is from a newer version of 3B Mailbox. Update the app and try again.',
     );
   }
   if (!Array.isArray(data.filters)) throw new BackupError('This backup has no list of filters.');
@@ -364,7 +364,7 @@ const isTrue = (value) => value.trim().toLowerCase() === 'true';
 /**
  * Reads Gmail's mailFilters.xml (Gmail settings, Filters and blocked addresses, Export).
  * Each entry becomes one filter, as in Gmail. The file names labels, not IDs, so a label becomes
- * the placeholder ID "new:<name>". Properties Email Filter does not know go into warnings.
+ * the placeholder ID "new:<name>". Properties 3B Mailbox does not know go into warnings.
  * It does not use DOMParser, so it runs in Node and in the browser.
  * @param {string} text
  * @returns {GmailXmlImport}
@@ -384,7 +384,7 @@ export function fromGmailXml(text) {
   const entryCount = (clean.match(/<entry\b/g) ?? []).length;
   if (entryCount > XML_LIMITS.maxEntries) {
     throw new BackupError(
-      `This file has ${entryCount.toLocaleString('en-GB')} entries. Email Filter reads up to ${XML_LIMITS.maxEntries.toLocaleString('en-GB')}. Gmail allows 1,000 filters.`,
+      `This file has ${entryCount.toLocaleString('en-GB')} entries. 3B Mailbox reads up to ${XML_LIMITS.maxEntries.toLocaleString('en-GB')}. Gmail allows 1,000 filters.`,
     );
   }
   const entries = [...clean.matchAll(/<entry\b[^>]*>([\s\S]*?)<\/entry>/g)].map((m) => m[1]);
@@ -485,7 +485,7 @@ export function fromGmailXml(text) {
             friendly.category = /** @type {any} */ (CATEGORY_BY_SMART_LABEL[value]);
           } else if (value) {
             warnings.push(
-              `Filter ${n} puts mail in a category Email Filter does not know ("${value}"). The category is left out.`,
+              `Filter ${n} puts mail in a category 3B Mailbox does not know ("${value}"). The category is left out.`,
             );
           }
           break;
@@ -510,11 +510,11 @@ export function fromGmailXml(text) {
         warnings.push(`Filter ${n} has a size that is not a number. The size is left out.`);
       } else if (amount > 0) {
         if (!unit) {
-          warnings.push(`Filter ${n} has a size with no unit. Email Filter reads it as bytes.`);
+          warnings.push(`Filter ${n} has a size with no unit. 3B Mailbox reads it as bytes.`);
         }
         if (operator !== 's_sl' && operator !== 's_ss') {
           warnings.push(
-            `Filter ${n} has a size but does not say larger or smaller. Email Filter reads it as larger.`,
+            `Filter ${n} has a size but does not say larger or smaller. 3B Mailbox reads it as larger.`,
           );
         }
         criteria.size = Math.round(amount * (unit ?? 1));
@@ -524,7 +524,7 @@ export function fromGmailXml(text) {
 
     if (unknown.length) {
       warnings.push(
-        `Filter ${n} uses ${unknown.map((u) => `"${u}"`).join(', ')}, which Email Filter does not know. ${unknown.length === 1 ? 'It is' : 'They are'} left out of the new file.`,
+        `Filter ${n} uses ${unknown.map((u) => `"${u}"`).join(', ')}, which 3B Mailbox does not know. ${unknown.length === 1 ? 'It is' : 'They are'} left out of the new file.`,
       );
     }
     const action = toApi(friendly);
@@ -533,7 +533,7 @@ export function fromGmailXml(text) {
       return;
     }
     if (Object.keys(action).length === 0) {
-      warnings.push(`Filter ${n} has no action that Email Filter knows. It is left out.`);
+      warnings.push(`Filter ${n} has no action that 3B Mailbox knows. It is left out.`);
       return;
     }
     // Gmail IDs look like z0000001687000000000*1234567890123456. Keep them safe for HTML ids and URLs.
@@ -546,7 +546,7 @@ export function fromGmailXml(text) {
 
   if (filters.length === 0) {
     throw new BackupError(
-      'Email Filter could not read any filters in this file. Check that you chose mailFilters.xml from Gmail.',
+      '3B Mailbox could not read any filters in this file. Check that you chose mailFilters.xml from Gmail.',
     );
   }
   return { filters, labelNames, forwardAddresses, warnings };

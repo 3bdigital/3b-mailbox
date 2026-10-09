@@ -1,12 +1,12 @@
-# Email Filter
+# 3B Mailbox
 
 A free, open-source and private filter manager for Gmail. It runs fully in your browser.
 
 **Status: pre-release, not deployed.**
 
-Email Filter shows all your Gmail filters in one clear view. It finds duplicates and conflicts, merges filters that do the same job, makes bulk changes with a preview first, and helps you make new filters from a form or from ready-made suggestions. It is a static web app (a PWA). It has no server, no analytics, no cookies and no third-party scripts except the Google sign-in script. The maintainer receives no data.
+3B Mailbox shows all your Gmail filters in one clear view. It finds duplicates and conflicts, merges filters that do the same job, makes bulk changes with a preview first, and helps you make new filters from a form or from ready-made suggestions. It is a static web app (a PWA). It has no server, no analytics, no cookies and no third-party scripts except the Google sign-in script. The maintainer receives no data.
 
-Email Filter is an independent project. Google does not make, endorse or support it.
+3B Mailbox is an independent project. Google does not make, endorse or support it.
 
 ## Screenshots
 
@@ -24,7 +24,7 @@ More in [docs/screenshots](docs/screenshots).
 
 ## Quick start
 
-You can use Email Filter with Google sign-in or without it.
+You can use 3B Mailbox with Google sign-in or without it.
 
 - **With sign-in**, changes go straight to Gmail, and you can see matching mail. You need your own Google Cloud OAuth client ID. It is free and takes about 10 minutes to make. See [Setup](#setup).
 - **Without sign-in**, you need no client ID and no Google permission. The app makes no network requests apart from loading its own files. See [No sign-in mode](#no-sign-in-mode).
@@ -32,12 +32,12 @@ You can use Email Filter with Google sign-in or without it.
 You can run the app in three ways:
 
 1. **Use the hosted copy.** Add the hosted copy's origin to your client ID, open the app and paste your client ID. The hosted copy is not live yet.
-2. **Host your own copy.** Publish the `site/` folder on any static host that serves HTTPS (GitHub Pages, Cloudflare Pages, Netlify, a home server). Every link in the app is relative, so it works at any address: a custom domain or subdomain, a path on a shared host, or `localhost`. For sign-in, give it its own origin, for example `https://filters.example.com`, because sites that share an origin share browser storage.
+2. **Host your own copy.** Publish the `site/` folder on any static host that serves HTTPS (Cloudflare Workers, Cloudflare Pages, GitHub Pages, Netlify, a home server). Every link in the app is relative, so it works at any address: a custom domain or subdomain, a path on a shared host, or `localhost`. For sign-in, give it its own origin, for example `https://filters.example.com`, because sites that share an origin share browser storage.
 3. **Run it on your computer.**
 
    ```sh
-   git clone https://github.com/jackbremer/gmail-butler.git
-   cd gmail-butler
+   git clone https://github.com/3b-digital/3b-mailbox.git
+   cd 3b-mailbox
    npm install
    npm run dev
    ```
@@ -139,6 +139,19 @@ docs/               Architecture and design notes
 ```
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the module contracts and [PLAN.md](PLAN.md) for the plan.
+
+## Deployment
+
+The hosted copy runs on Cloudflare as the Worker `3b-mailbox-worker`. It serves the files in `site/` as static assets, with no Worker code. `wrangler.jsonc` holds the settings and `site/_headers` holds the security headers (frame blocking, `nosniff`, HSTS, and a cross-origin opener policy that keeps the Google sign-in popup working).
+
+Deploys are manual. In GitHub, open Actions, then **Deploy to Cloudflare**, then **Run workflow**. The workflow runs every check and test first. It needs two repository secrets:
+
+- `CLOUDFLARE_API_TOKEN`: an API token with the **Workers Scripts: Edit** permission for the 3B Digital account.
+- `CLOUDFLARE_ACCOUNT_ID`: the account ID from the Cloudflare dashboard.
+
+To deploy from your computer instead: `npx wrangler@4 deploy`. To try the Cloudflare set-up locally: `npx wrangler@4 dev`.
+
+Before anyone makes a client ID, add the custom domain in `wrangler.jsonc` (`routes`). Do not turn on Cloudflare Web Analytics or other features that add scripts to pages; the privacy policy says there are none.
 
 ## Contributing
 

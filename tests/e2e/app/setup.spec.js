@@ -9,7 +9,7 @@ test.describe('first run and the app shell', () => {
   }) => {
     await page.goto('/app/');
     await expect(page).toHaveURL(/#\/setup$/);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Set up Email Filter');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Set up 3B Mailbox');
     const origin = new URL(/** @type {string} */ (baseURL)).origin;
     await expect(page.locator('.origin-code')).toHaveText(origin);
     await expect(page.getByRole('button', { name: 'Copy this address' })).toBeVisible();
@@ -48,7 +48,7 @@ test.describe('first run and the app shell', () => {
     await expect(page.getByRole('heading', { name: 'Sign in to see your filters' })).toBeVisible();
     await expect(page.locator('#auth-status')).toContainText('Signed out');
     await expect(page.getByRole('banner').getByRole('button', { name: 'Sign in' })).toBeVisible();
-    const stored = await page.evaluate(() => localStorage.getItem('ef:clientId'));
+    const stored = await page.evaluate(() => localStorage.getItem('3bm:clientId'));
     expect(stored).toBe('"123456789012-abc123def.apps.googleusercontent.com"');
     const tokenLike = await page.evaluate(() =>
       Object.entries(localStorage).filter(([, v]) => /ya29\.|access_token/.test(v)),
@@ -68,8 +68,8 @@ test.describe('first run and the app shell', () => {
     expect(csp).not.toContain('unsafe-inline');
     const manifest = await (await request.get('/app/manifest.webmanifest')).json();
     expect(manifest).toMatchObject({
-      name: 'Email Filter',
-      short_name: 'Filters',
+      name: '3B Mailbox',
+      short_name: '3B Mailbox',
       start_url: './',
       scope: './',
       display: 'standalone',

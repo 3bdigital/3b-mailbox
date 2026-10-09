@@ -1,6 +1,6 @@
 # Architecture and module contracts
 
-Email Filter is static HTML, CSS and JavaScript ES modules. There is no build step and no runtime dependency. Everything under `site/` is published as-is.
+3B Mailbox is static HTML, CSS and JavaScript ES modules. There is no build step and no runtime dependency. Everything under `site/` is published as-is.
 
 ```
 site/
@@ -109,7 +109,7 @@ Gmail search syntax parser and serialiser.
 
 ### core/backup.js
 
-- `toJson(filters, labels): string`: versioned backup `{app:'email-filter', version:1, exportedAt, filters, labels}`.
+- `toJson(filters, labels): string`: versioned backup `{app:'3b-mailbox', version:1, exportedAt, filters, labels}`.
 - `fromJson(text): {filters, labels}` with validation (throws `BackupError` with a plain message).
 - `toGmailXml(filters, labelsById, opts?: {now, author})`: Gmail `mailFilters.xml` format, for import in Gmail's own settings. Gmail XML has one `label` property per entry, so a filter with several labels becomes several entries with the same criteria (the first has the other actions too). Sizes are written in bytes (`sizeUnit` `s_sb`).
 - `fromGmailXml(text): {filters, labelNames, forwardAddresses, warnings}`: reads Gmail's exported `mailFilters.xml` with no DOMParser (runs in Node and the browser). Each `<entry>` becomes one filter, as in Gmail. Labels are names in the file, so a label becomes the placeholder ID `new:<name>`. Sizes are converted to bytes (`s_sb`, `s_skb`, `s_smb`; 1 KB = 1,024 bytes). Smart labels map to `CATEGORY_*`. Unknown properties, entries with no criteria or no known action, and guessed sizes go into `warnings`. Throws `BackupError` for a file that is not a Gmail filter feed, has no filters, is damaged, is over 5 MB or has over 2,000 entries (`XML_LIMITS`).
@@ -117,7 +117,7 @@ Gmail search syntax parser and serialiser.
 
 ### core/storage.js
 
-- `createStore(backend = globalThis.localStorage, prefix = 'ef:')`: returns `{get(key, fallback), set(key, value), remove(key), clearAll()}`. Every call is in try/catch; works with no storage.
+- `createStore(backend = globalThis.localStorage, prefix = '3bm:')`: returns `{get(key, fallback), set(key, value), remove(key), clearAll()}`. Every call is in try/catch; works with no storage.
 - Keys in use: `clientId`, `theme`, `density`, `journal` (undo journal), `dismissed` (dismissed hints), `tierWanted`.
 
 ### core/journal.js

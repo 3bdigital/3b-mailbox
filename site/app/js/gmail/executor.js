@@ -217,7 +217,7 @@ export async function runPlan(plan, api, options = {}) {
         await writeJournal('delete', step.filterId, step.previous);
         await api.deleteFilter(step.filterId);
       } else {
-        throw new PlanError('This plan has a step that Email Filter does not know.', {
+        throw new PlanError('This plan has a step that 3B Mailbox does not know.', {
           code: 'step-failed',
         });
       }

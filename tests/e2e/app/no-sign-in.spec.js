@@ -188,7 +188,7 @@ test.describe('no sign-in mode', () => {
     await page.getByRole('link', { name: 'Change mode' }).click();
     await page.getByRole('button', { name: 'Leave no sign-in mode' }).click();
     await expect(page.locator('#auth-status')).toHaveText('Not set up');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Set up Email Filter');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Set up 3B Mailbox');
   });
 
   test('a file that is not a Gmail export shows an error summary', async ({ page }) => {
@@ -196,7 +196,7 @@ test.describe('no sign-in mode', () => {
     await page.getByLabel('Choose your mailFilters.xml file').setInputFiles({
       name: 'backup.json',
       mimeType: 'application/json',
-      buffer: Buffer.from('{"app":"email-filter"}'),
+      buffer: Buffer.from('{"app":"3b-mailbox"}'),
     });
     const alert = page.getByRole('alert');
     await expect(alert).toContainText('There is a problem');
@@ -212,7 +212,7 @@ test.describe('no sign-in mode', () => {
 
   test('the setup page offers all three ways in', async ({ page }) => {
     await page.goto('/app/#/setup');
-    const ways = page.getByRole('list', { name: 'Ways to use Email Filter' });
+    const ways = page.getByRole('list', { name: 'Ways to use 3B Mailbox' });
     await expect(ways.getByRole('heading')).toHaveText([
       'Sign in with your own Google client ID',
       'Work without signing in',
@@ -229,7 +229,7 @@ test.describe('no sign-in mode', () => {
     test(`axe: setup page and download dialog in the ${scheme} theme`, async ({ page }) => {
       await page.emulateMedia({ colorScheme: scheme });
       await page.goto('/app/#/setup');
-      await expect(page.getByRole('heading', { level: 1 })).toHaveText('Set up Email Filter');
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText('Set up 3B Mailbox');
       expect(await axe(page)).toEqual([]);
       await page.getByLabel('Choose your mailFilters.xml file').setInputFiles(FIXTURE);
       await expect(page).toHaveURL(/#\/overview$/);

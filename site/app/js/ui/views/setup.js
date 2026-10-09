@@ -146,7 +146,7 @@ function fileSection(ctx) {
     h('p', {
       id: 'filter-file-hint',
       class: 'field-hint',
-      text: 'Or drag the file here. Email Filter reads it in this tab only.',
+      text: 'Or drag the file here. 3B Mailbox reads it in this tab only.',
     }),
     input,
   );
@@ -193,7 +193,7 @@ function fileSection(ctx) {
       showError(
         err instanceof BackupError
           ? err.message
-          : 'Email Filter could not read this file. Check that you chose mailFilters.xml from Gmail.',
+          : '3B Mailbox could not read this file. Check that you chose mailFilters.xml from Gmail.',
       );
     } finally {
       input.value = '';
@@ -224,7 +224,7 @@ function fileSection(ctx) {
       h('h2', { id: 'setup-file-title', class: 'section-title', text: 'Work without signing in' }),
       h('p', {
         class: 'section-lead',
-        text: 'You need no Google Cloud client ID and no Google permission. Email Filter reads only the file you choose. Nothing leaves your browser.',
+        text: 'You need no Google Cloud client ID and no Google permission. 3B Mailbox reads only the file you choose. Nothing leaves your browser.',
       }),
       h(
         'ol',
@@ -237,7 +237,7 @@ function fileSection(ctx) {
       notice({
         tone: 'info',
         title: 'What you give up',
-        text: 'Email Filter cannot show matching mail or apply a filter to mail you already have. You delete and import your filters in Gmail yourself.',
+        text: '3B Mailbox cannot show matching mail or apply a filter to mail you already have. You delete and import your filters in Gmail yourself.',
       }),
     ),
   };
@@ -329,8 +329,8 @@ export function render(ctx) {
     'div',
     { class: 'view-setup' },
     viewHeader({
-      title: 'Set up Email Filter',
-      lead: 'Choose how to use Email Filter. You can change this later.',
+      title: 'Set up 3B Mailbox',
+      lead: 'Choose how to use 3B Mailbox. You can change this later.',
     }),
     ctx.mode === 'file' &&
       notice({
@@ -364,7 +364,7 @@ export function render(ctx) {
       }),
     h(
       'ul',
-      { class: 'choice-grid', 'aria-label': 'Ways to use Email Filter' },
+      { class: 'choice-grid', 'aria-label': 'Ways to use 3B Mailbox' },
       choice(
         'signin',
         'Sign in with your own Google client ID',
@@ -420,7 +420,7 @@ export function render(ctx) {
         originBox(),
         notice({
           tone: 'info',
-          text: 'It must match exactly, with no slash at the end. If you open Email Filter from another address later, add that address too.',
+          text: 'It must match exactly, with no slash at the end. If you open 3B Mailbox from another address later, add that address too.',
         }),
       ),
       h(
@@ -428,7 +428,7 @@ export function render(ctx) {
         { class: 'setup-step card' },
         h('h3', { class: 'card-title', text: 'Paste your client ID' }),
         h('p', {
-          text: 'Email Filter keeps it in this browser only. It is not a secret, but it is yours.',
+          text: '3B Mailbox keeps it in this browser only. It is not a secret, but it is yours.',
         }),
         form,
       ),
@@ -439,11 +439,11 @@ export function render(ctx) {
       h('h3', {
         id: 'setup-perms',
         class: 'section-title',
-        text: 'What Email Filter asks Google for',
+        text: 'What 3B Mailbox asks Google for',
       }),
       h('p', {
         class: 'section-lead',
-        text: 'Permissions come in three steps. Email Filter asks for the next step only when you turn on a feature that needs it.',
+        text: 'Permissions come in three steps. 3B Mailbox asks for the next step only when you turn on a feature that needs it.',
       }),
       h('ul', { class: 'tier-grid' }, tiers),
     ),

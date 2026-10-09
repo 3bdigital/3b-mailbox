@@ -32,7 +32,7 @@ describe('toJson and fromJson', () => {
     ];
     const text = toJson(filters, labels, { now });
     expect(JSON.parse(text)).toMatchObject({
-      app: 'email-filter',
+      app: '3b-mailbox',
       version: 1,
       exportedAt: now.toISOString(),
     });
@@ -48,7 +48,7 @@ describe('toJson and fromJson', () => {
 
   it('tidies empty fields and accepts missing labels', () => {
     const text = JSON.stringify({
-      app: 'email-filter',
+      app: '3b-mailbox',
       version: 1,
       filters: [
         {
@@ -69,42 +69,42 @@ describe('toJson and fromJson', () => {
       ],
       exportedAt: null,
     });
-    expect(fromJson('{"app":"email-filter","version":1,"filters":[]}').labels).toEqual([]);
+    expect(fromJson('{"app":"3b-mailbox","version":1,"filters":[]}').labels).toEqual([]);
   });
 
   it.each([
     ['not json', 'not JSON'],
-    ['[]', 'not an Email Filter backup'],
-    ['{"app":"other"}', 'not an Email Filter backup'],
-    ['{"app":"email-filter","version":2,"filters":[]}', 'newer version'],
-    ['{"app":"email-filter","version":"1","filters":[]}', 'newer version'],
-    ['{"app":"email-filter","version":1}', 'no list of filters'],
-    ['{"app":"email-filter","version":1,"filters":[1]}', 'Filter 1 is not valid'],
-    ['{"app":"email-filter","version":1,"filters":[{"action":{}}]}', 'no search criteria'],
-    ['{"app":"email-filter","version":1,"filters":[{"criteria":{}}]}', 'no action'],
+    ['[]', 'not a 3B Mailbox backup'],
+    ['{"app":"other"}', 'not a 3B Mailbox backup'],
+    ['{"app":"3b-mailbox","version":2,"filters":[]}', 'newer version'],
+    ['{"app":"3b-mailbox","version":"1","filters":[]}', 'newer version'],
+    ['{"app":"3b-mailbox","version":1}', 'no list of filters'],
+    ['{"app":"3b-mailbox","version":1,"filters":[1]}', 'Filter 1 is not valid'],
+    ['{"app":"3b-mailbox","version":1,"filters":[{"action":{}}]}', 'no search criteria'],
+    ['{"app":"3b-mailbox","version":1,"filters":[{"criteria":{}}]}', 'no action'],
     [
-      '{"app":"email-filter","version":1,"filters":[{"criteria":{"from":1},"action":{}}]}',
+      '{"app":"3b-mailbox","version":1,"filters":[{"criteria":{"from":1},"action":{}}]}',
       'not text',
     ],
     [
-      '{"app":"email-filter","version":1,"filters":[{"criteria":{"hasAttachment":"y"},"action":{}}]}',
+      '{"app":"3b-mailbox","version":1,"filters":[{"criteria":{"hasAttachment":"y"},"action":{}}]}',
       'true or false',
     ],
-    ['{"app":"email-filter","version":1,"filters":[{"criteria":{"size":-1},"action":{}}]}', 'size'],
+    ['{"app":"3b-mailbox","version":1,"filters":[{"criteria":{"size":-1},"action":{}}]}', 'size'],
     [
-      '{"app":"email-filter","version":1,"filters":[{"criteria":{"sizeComparison":"big"},"action":{}}]}',
+      '{"app":"3b-mailbox","version":1,"filters":[{"criteria":{"sizeComparison":"big"},"action":{}}]}',
       'comparison',
     ],
     [
-      '{"app":"email-filter","version":1,"filters":[{"criteria":{},"action":{"addLabelIds":[1]}}]}',
+      '{"app":"3b-mailbox","version":1,"filters":[{"criteria":{},"action":{"addLabelIds":[1]}}]}',
       'label list',
     ],
     [
-      '{"app":"email-filter","version":1,"filters":[{"criteria":{},"action":{"forward":3}}]}',
+      '{"app":"3b-mailbox","version":1,"filters":[{"criteria":{},"action":{"forward":3}}]}',
       'forward',
     ],
-    ['{"app":"email-filter","version":1,"filters":[],"labels":{}}', 'labels that is not valid'],
-    ['{"app":"email-filter","version":1,"filters":[],"labels":[{"id":1}]}', 'Label 1 is not valid'],
+    ['{"app":"3b-mailbox","version":1,"filters":[],"labels":{}}', 'labels that is not valid'],
+    ['{"app":"3b-mailbox","version":1,"filters":[],"labels":[{"id":1}]}', 'Label 1 is not valid'],
   ])('rejects %s', (text, message) => {
     expect(() => fromJson(text)).toThrow(BackupError);
     expect(() => fromJson(text)).toThrow(message);

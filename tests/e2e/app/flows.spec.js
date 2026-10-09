@@ -6,7 +6,7 @@ test.use({ serviceWorkers: 'block' });
 test.describe('demo flows', () => {
   test('overview loads with 66 filters', async ({ page }) => {
     await openDemo(page);
-    await expect(page).toHaveTitle('Overview - Email Filter');
+    await expect(page).toHaveTitle('Overview - 3B Mailbox');
     await expect(page.getByText('Demo account.')).toBeVisible();
     const filters = page.locator('.stat', { hasText: 'Filters' }).first();
     await expect(filters.locator('.stat-value')).toHaveText('66');
@@ -231,7 +231,7 @@ test.describe('demo flows', () => {
     await page.getByRole('dialog').getByRole('button', { name: 'Delete local data' }).click();
     await expect(page.locator('html')).not.toHaveAttribute('data-theme');
     const keys = await page.evaluate(() =>
-      Object.keys(localStorage).filter((k) => k.startsWith('ef:')),
+      Object.keys(localStorage).filter((k) => k.startsWith('3bm:')),
     );
     expect(keys).toEqual([]);
     await expect(page.getByRole('radio', { name: 'System' })).toBeChecked();
@@ -246,7 +246,7 @@ test.describe('demo flows', () => {
     await page.getByRole('button', { name: 'More actions' }).click();
     const download = page.waitForEvent('download');
     await page.getByRole('button', { name: 'Export as a JSON backup' }).click();
-    expect((await download).suggestedFilename()).toMatch(/^email-filter-backup-.*\.json$/);
+    expect((await download).suggestedFilename()).toMatch(/^3b-mailbox-backup-.*\.json$/);
   });
 });
 
@@ -271,7 +271,7 @@ test.describe('more settings and editor flows', () => {
   test('restore a JSON backup through the plan preview', async ({ page }) => {
     await openDemo(page, 'settings');
     const backup = {
-      app: 'email-filter',
+      app: '3b-mailbox',
       version: 1,
       exportedAt: '2026-10-01T09:00:00.000Z',
       filters: [{ criteria: { from: 'restored@example.com' }, action: { addLabelIds: ['L9'] } }],

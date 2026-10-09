@@ -84,7 +84,7 @@ function defaultBackend() {
  * @param {string} [prefix]
  * @returns {Store}
  */
-export function createStore(backend, prefix = 'ef:') {
+export function createStore(backend, prefix = '3bm:') {
   const real = probe(backend === undefined ? defaultBackend() : backend, prefix);
   const store = real ?? memoryStorage();
   return {

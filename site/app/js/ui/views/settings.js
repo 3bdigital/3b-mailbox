@@ -25,7 +25,7 @@ import { PREFS } from '../state.js';
 import { originBox } from './setup.js';
 
 /** The label for temporary test filters. */
-export const PROBE_LABEL = 'zz-ef-test/probe';
+export const PROBE_LABEL = 'zz-3bm-test/probe';
 
 /**
  * A query string of exactly n characters for the length test.
@@ -135,7 +135,7 @@ export function render(ctx) {
                 const ok = await confirmDialog({
                   title: 'Remove your client ID?',
                   message:
-                    'Email Filter forgets your client ID and signs you out. Your filters in Gmail do not change.',
+                    '3B Mailbox forgets your client ID and signs you out. Your filters in Gmail do not change.',
                   confirmLabel: 'Remove client ID',
                   danger: true,
                 });
@@ -191,7 +191,7 @@ export function render(ctx) {
               size: 'sm',
               content: [
                 h('p', {
-                  text: 'Email Filter will not ask for this permission again. Google keeps it until you remove it.',
+                  text: '3B Mailbox will not ask for this permission again. Google keeps it until you remove it.',
                 }),
                 h(
                   'p',
@@ -207,7 +207,7 @@ export function render(ctx) {
                     'your Google Account permissions',
                     h('span', { class: 'visually-hidden', text: ' (opens in a new tab)' }),
                   ),
-                  ', remove Email Filter, then sign in again.',
+                  ', remove 3B Mailbox, then sign in again.',
                 ),
               ],
               footer: close,
@@ -231,7 +231,7 @@ export function render(ctx) {
     'shield',
     h('p', {
       class: 'muted',
-      text: 'Email Filter asks for the smallest permission it needs. Turn on more only when you want the feature.',
+      text: '3B Mailbox asks for the smallest permission it needs. Turn on more only when you want the feature.',
     }),
     noSignIn ? needsSignIn() : permList,
     h(
@@ -356,7 +356,7 @@ export function render(ctx) {
           if (!ready()) return toast('Your filters are not loaded yet.', { tone: 'warning' });
           const s = ctx.state.get();
           download(
-            `email-filter-backup-${new Date().toISOString().slice(0, 10)}.json`,
+            `3b-mailbox-backup-${new Date().toISOString().slice(0, 10)}.json`,
             toJson(s.filters, s.labels),
             'application/json',
           );
@@ -385,7 +385,7 @@ export function render(ctx) {
       h('label', { for: 'restore-file', class: 'field-label', text: 'Restore from a JSON backup' }),
       h('p', {
         class: 'field-hint',
-        text: 'Email Filter shows you every change before it makes any. Filters you already have are left out.',
+        text: '3B Mailbox shows you every change before it makes any. Filters you already have are left out.',
       }),
       fileInput,
     ),
@@ -401,7 +401,7 @@ export function render(ctx) {
         historyArea,
         h('p', {
           class: 'muted',
-          text: 'No changes yet. Email Filter keeps a copy of each filter it changes or deletes, in this browser only.',
+          text: 'No changes yet. 3B Mailbox keeps a copy of each filter it changes or deletes, in this browser only.',
         }),
       );
       return;
@@ -479,7 +479,7 @@ export function render(ctx) {
   function probeParts() {
     return [
       h('p', {
-        text: `Google does not publish the longest filter it accepts. Email Filter assumes ${LIMITS.criteriaCharsHard.toLocaleString('en-GB')} characters and keeps each filter under ${LIMITS.criteriaCharsSafe.toLocaleString('en-GB')}. This test finds the real limit for your account.`,
+        text: `Google does not publish the longest filter it accepts. 3B Mailbox assumes ${LIMITS.criteriaCharsHard.toLocaleString('en-GB')} characters and keeps each filter under ${LIMITS.criteriaCharsSafe.toLocaleString('en-GB')}. This test finds the real limit for your account.`,
       }),
       h('p', {
         class: 'muted',
@@ -500,7 +500,7 @@ export function render(ctx) {
     'Data in this browser',
     'trash',
     h('p', {
-      text: 'Email Filter keeps your settings, client ID and change history in this browser only. It never stores your Google sign-in.',
+      text: '3B Mailbox keeps your settings, client ID and change history in this browser only. It never stores your Google sign-in.',
     }),
     h(
       'div',
@@ -605,7 +605,7 @@ async function measure(ctx, out) {
   }
   const ok = await confirmDialog({
     title: 'Measure the filter length limit?',
-    message: `Email Filter will make and delete about 22 test filters with the label ${PROBE_LABEL}. They catch no real mail. It takes about a minute. Keep this page open.`,
+    message: `3B Mailbox will make and delete about 22 test filters with the label ${PROBE_LABEL}. They catch no real mail. It takes about a minute. Keep this page open.`,
     confirmLabel: 'Start the test',
   });
   if (!ok) return;
@@ -664,7 +664,7 @@ async function measure(ctx, out) {
         throw err;
       }
     };
-    await ensureLabel('zz-ef-test');
+    await ensureLabel('zz-3bm-test');
     const labelId = await ensureLabel(PROBE_LABEL);
     /** @param {number} n */
     const tryLength = async (n) => {
@@ -702,7 +702,7 @@ async function measure(ctx, out) {
           if (await tryLength(mid)) lo = mid;
           else hi = mid;
         }
-        resultText = `The longest filter Gmail accepted is ${lo.toLocaleString('en-GB')} characters. Email Filter keeps filters under ${LIMITS.criteriaCharsSafe.toLocaleString('en-GB')}.`;
+        resultText = `The longest filter Gmail accepted is ${lo.toLocaleString('en-GB')} characters. 3B Mailbox keeps filters under ${LIMITS.criteriaCharsSafe.toLocaleString('en-GB')}.`;
       }
     }
   } catch (err) {

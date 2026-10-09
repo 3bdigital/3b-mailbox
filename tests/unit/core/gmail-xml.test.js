@@ -186,8 +186,8 @@ describe('fromGmailXml: properties and quoting', () => {
     expect(out.filters[0].criteria).toEqual({ from: 'a', size: 7, sizeComparison: 'larger' });
     expect(out.filters[1].criteria).toEqual({ from: 'b' });
     expect(out.warnings).toEqual([
-      'Filter 1 has a size with no unit. Email Filter reads it as bytes.',
-      'Filter 1 has a size but does not say larger or smaller. Email Filter reads it as larger.',
+      'Filter 1 has a size with no unit. 3B Mailbox reads it as bytes.',
+      'Filter 1 has a size but does not say larger or smaller. 3B Mailbox reads it as larger.',
       'Filter 2 has a size that is not a number. The size is left out.',
     ]);
   });
@@ -229,8 +229,8 @@ describe('fromGmailXml: properties and quoting', () => {
     );
     expect(out.filters).toHaveLength(2);
     expect(out.warnings).toEqual([
-      'Filter 1 uses "cannedResponse", "shouldSendTemplate", which Email Filter does not know. They are left out of the new file.',
-      'Filter 2 puts mail in a category Email Filter does not know ("^smartlabel_unknown"). The category is left out.',
+      'Filter 1 uses "cannedResponse", "shouldSendTemplate", which 3B Mailbox does not know. They are left out of the new file.',
+      'Filter 2 puts mail in a category 3B Mailbox does not know ("^smartlabel_unknown"). The category is left out.',
     ]);
   });
 
@@ -247,8 +247,8 @@ describe('fromGmailXml: properties and quoting', () => {
     expect(out.filters.map((f) => f.criteria.from)).toEqual(['ok']);
     expect(out.warnings).toEqual([
       'Filter 1 has no search terms. It is left out.',
-      'Filter 2 uses "mystery", which Email Filter does not know. It is left out of the new file.',
-      'Filter 2 has no action that Email Filter knows. It is left out.',
+      'Filter 2 uses "mystery", which 3B Mailbox does not know. It is left out of the new file.',
+      'Filter 2 has no action that 3B Mailbox knows. It is left out.',
       'Entry 4 is not a filter. It is left out.',
     ]);
   });
@@ -298,14 +298,14 @@ describe('fromGmailXml: files it rejects', () => {
   const cases = [
     ['', 'This file is empty.'],
     ['   ', 'This file is empty.'],
-    ['{"app":"email-filter"}', 'This is not a Gmail filter file.'],
+    ['{"app":"3b-mailbox"}', 'This is not a Gmail filter file.'],
     ['<html><body>hi</body></html>', 'This is not a Gmail filter file.'],
     ["<?xml version='1.0'?><rss></rss>", 'This is not a Gmail filter file.'],
     [feed([prop('from', 'a')]).replace('</feed>', ''), 'This is not a Gmail filter file.'],
     [feed([]), 'This file has no filters in it.'],
     [feed(['<from>a</from>']), 'This is not a Gmail filter file.'],
     [feed([prop('from', 'a')]).replace('</entry>', ''), 'This file is damaged.'],
-    [feed([prop('label', 'L')]), 'Email Filter could not read any filters in this file.'],
+    [feed([prop('label', 'L')]), '3B Mailbox could not read any filters in this file.'],
   ];
   for (const [text, message] of cases) {
     it(`rejects: ${JSON.stringify(text.slice(0, 40))}...`, () => {
@@ -330,7 +330,7 @@ describe('fromGmailXml: files it rejects', () => {
     const entry = prop('from', 'a') + prop('shouldStar', 'true');
     expect(fromGmailXml(feed(Array(2000).fill(entry))).filters).toHaveLength(2000);
     expect(() => fromGmailXml(feed(Array(2001).fill(entry)))).toThrow(
-      'This file has 2,001 entries. Email Filter reads up to 2,000.',
+      'This file has 2,001 entries. 3B Mailbox reads up to 2,000.',
     );
   });
 });

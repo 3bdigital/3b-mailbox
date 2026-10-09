@@ -5,7 +5,7 @@ Run this on a personal Gmail account and on a Workspace account before each rele
 ## Before you start
 
 1. Download a backup of your filters from the app (Settings, Backup). Also export them in Gmail (Settings, Filters and blocked addresses, select all, Export).
-2. All test filters use labels under `zz-ef-test/`. To clean up, delete that label and the filters the app lists under it.
+2. All test filters use labels under `zz-3bm-test/`. To clean up, delete that label and the filters the app lists under it.
 3. Record results in the table at the end, one row per account.
 
 ## A. Setup and sign-in
@@ -87,6 +87,6 @@ Run this on a personal Gmail account and on a Workspace account before each rele
 | G3  | Check sizes in KB and MB, and filters with no size.                                         | Sizes match Gmail. 1 KB = 1,024 bytes, 1 MB = 1,048,576 bytes.                                   |
 | G4  | Make a change, download, delete all filters in Gmail, import the new file.                  | Gmail creates the same filters plus the change. Note the exact wording of Gmail's import screen. |
 | G5  | Import a file where one filter has two labels (the app writes two entries).                 | Gmail creates two filters, one for each label.                                                   |
-| G6  | Import a file with a new nested label, for example `zz-ef-test/new/child`.                  | Gmail creates the labels.                                                                        |
+| G6  | Import a file with a new nested label, for example `zz-3bm-test/new/child`.                 | Gmail creates the labels.                                                                        |
 | G7  | Import a file with a category (`smartLabelToApply`) and a size in bytes (`s_sb`).           | Gmail accepts both.                                                                              |
 | G8  | Import a file that forwards to an address that is not verified.                             | Record what Gmail does.                                                                          |

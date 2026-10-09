@@ -1,4 +1,4 @@
-# Email Filter: project plan (v0.2)
+# 3B Mailbox: project plan (v0.2)
 
 Status: planning only. Nothing is deployed. Open questions are in section 12.
 
@@ -212,7 +212,7 @@ No server storage. Recommendation: `localStorage` plus "export settings as a JSO
 5. Matching-mail preview: yes, as an opt-in permission tier. The app explains each tier and asks Google for the extra scope only when the user turns the feature on. Tiers: basic (filters, labels, forwarding list), preview (adds `gmail.readonly`), apply to existing mail (adds `gmail.modify`). Verified: `gmail.metadata` cannot use the `q` search parameter, so preview needs `gmail.readonly`.
 6. Delete and forward actions: allowed, with an extra confirmation step.
 7. Licence: AGPL-3.0-only.
-8. Name: "Email Filter" (working name).
+8. Name: "3B Mailbox" (working name).
 9. Templates: full catalogue, researched best practice (docs/TEMPLATES.md).
 10. Test data sized for about 60 filters with about 10 forwarding filters.
 11. Build all phases now. Deploy only when Jack says so (the Pages workflow is manual).
@@ -222,6 +222,11 @@ Update (Jack, 2026-10-09, after reading Chrome Web Store reviews of a similar ex
 12. Add a no-sign-in mode: export `mailFilters.xml` from Gmail, edit in the app, download, delete old filters in Gmail, import. No warning screen, no setup, no permissions. This replaces decision 2.
 13. No Google verification and no CASA assessment. Bring-your-own client ID stays (personal-use exception; no server, so no assessment would apply anyway). No Chrome extension with a shared client ID for now.
 14. First goal: get it working for Jack. Do not lock in: the app works at any origin (custom subdomain, apex domain, github.io, local). Hosting on GitHub Pages under a custom domain or subdomain owned by 3B Digital, chosen before anyone else makes a client ID.
+
+Update (Jack, 2026-10-09):
+
+15. Product name: **3B Mailbox**. GitHub owner `3b-digital`, repo `3b-mailbox`.
+16. Hosting: Cloudflare (3B Digital account), Worker `3b-mailbox-worker`, static assets only. Replaces GitHub Pages. Deploy is a manual GitHub workflow.
 
 ## 13. Further ideas
 

@@ -7,7 +7,7 @@ test.describe('landing page', () => {
   test('loads with a title, one h1 and the main calls to action', async ({ page }) => {
     const response = await page.goto('/');
     expect(response?.status()).toBe(200);
-    await expect(page).toHaveTitle(/Email Filter/);
+    await expect(page).toHaveTitle(/3B Mailbox/);
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.getByRole('link', { name: 'Try the demo' })).toHaveAttribute(
       'href',
