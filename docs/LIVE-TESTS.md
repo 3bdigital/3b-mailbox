@@ -77,3 +77,16 @@ Run this on a personal Gmail account and on a Workspace account before each rele
 | -------------- | ---- | ----------- | ---- | ------------------------- |
 | Personal Gmail |      |             |      |                           |
 | Workspace      |      |             |      |                           |
+
+## G. No sign-in mode (Gmail XML export and import)
+
+| #   | Step                                                                                        | Expected result                                                                                  |
+| --- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| G1  | Export all filters in Gmail. Open the file in the app.                                      | Filter count matches Gmail. No warnings, or every warning names a real Gmail feature.            |
+| G2  | Note any property the app does not know (for example `cannedResponse` for "Send template"). | Add each one to `core/backup.js` so it is kept, not dropped.                                     |
+| G3  | Check sizes in KB and MB, and filters with no size.                                         | Sizes match Gmail. 1 KB = 1,024 bytes, 1 MB = 1,048,576 bytes.                                   |
+| G4  | Make a change, download, delete all filters in Gmail, import the new file.                  | Gmail creates the same filters plus the change. Note the exact wording of Gmail's import screen. |
+| G5  | Import a file where one filter has two labels (the app writes two entries).                 | Gmail creates two filters, one for each label.                                                   |
+| G6  | Import a file with a new nested label, for example `zz-ef-test/new/child`.                  | Gmail creates the labels.                                                                        |
+| G7  | Import a file with a category (`smartLabelToApply`) and a size in bytes (`s_sb`).           | Gmail accepts both.                                                                              |
+| G8  | Import a file that forwards to an address that is not verified.                             | Record what Gmail does.                                                                          |

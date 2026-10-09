@@ -169,6 +169,13 @@ test.describe('no sign-in mode', () => {
     await details.locator('summary').click();
     await expect(details).toContainText('1 thing in your file to check');
     await expect(details).toContainText('Filter 5 uses "cannedResponse"');
+
+    await page.locator('.banner-file').getByRole('button', { name: 'Download for Gmail' }).click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.locator('.notice-danger')).toContainText(
+      'The new file does not keep 1 thing from your original file',
+    );
+    await expect(dialog.locator('.notice-danger')).toContainText('Filter 5 uses "cannedResponse"');
   });
 
   test('change mode: back to the setup page, then leave', async ({ page }) => {

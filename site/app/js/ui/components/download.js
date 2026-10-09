@@ -57,6 +57,21 @@ export function downloadDialog(ctx) {
             ? `The new file has ${plural(s.filters.length, 'filter')}.`
             : `The new file has ${plural(s.filters.length, 'filter')}. Gmail allows one label for each filter in a file, so some filters are split. Gmail gets ${plural(entries, 'filter')}.`,
       }),
+      ctx.file?.warnings?.length > 0 &&
+        notice({
+          tone: 'danger',
+          title: `The new file does not keep ${plural(ctx.file.warnings.length, 'thing')} from your original file`,
+          children: [
+            h(
+              'ul',
+              null,
+              ctx.file.warnings.map((w) => h('li', { text: w })),
+            ),
+            h('p', {
+              text: 'If you delete all your filters in Gmail, you lose these parts. In step 3, keep the filters named here. Or set them up again in Gmail after the import.',
+            }),
+          ],
+        }),
       h(
         'ol',
         { class: 'gmail-steps' },
