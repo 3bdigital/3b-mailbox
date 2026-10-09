@@ -249,3 +249,24 @@ test.describe('demo flows', () => {
     expect((await download).suggestedFilename()).toMatch(/^email-filter-backup-.*\.json$/);
   });
 });
+
+test.describe('a full account', () => {
+  test('1,000 filters stay quick to show and search', async ({ page }) => {
+    await page.goto('/app/?demo&size=1000#/filters');
+    await expect(page.locator('.result-count')).toHaveText('1,000 filters', { timeout: 10000 });
+    await expect(page.locator('.filter-card')).toHaveCount(100);
+    const started = Date.now();
+    await page.getByLabel('Search filters').fill('shop999.');
+    await expect(page.locator('.filter-card')).toHaveCount(1);
+    expect(Date.now() - started).toBeLessThan(2000);
+    await page.getByLabel('Search filters').fill('');
+    await expect(page.locator('.result-count')).toHaveText('1,000 filters');
+    await page.getByRole('button', { name: 'Show more filters' }).click();
+    await expect(page.locator('.filter-card')).toHaveCount(200);
+    await page.getByRole('link', { name: 'Overview' }).click();
+    await expect(page.getByRole('meter', { name: 'Filters' })).toHaveAttribute(
+      'aria-valuetext',
+      /At the limit/,
+    );
+  });
+});

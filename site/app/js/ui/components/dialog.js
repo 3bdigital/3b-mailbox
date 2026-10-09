@@ -132,6 +132,7 @@ export function openDialog(opts) {
     },
     setDismissable(on) {
       dismissable = on;
+      el.dataset.dismissable = String(on);
       closeButton.disabled = !on;
     },
     close(value) {

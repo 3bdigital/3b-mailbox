@@ -4,7 +4,7 @@ import { startApp } from './ui/app.js';
 import { toast } from './ui/components/toast.js';
 
 const params = new URLSearchParams(location.search);
-startApp({ demo: params.has('demo') });
+startApp({ demo: params.has('demo'), demoSize: Number(params.get('size')) || 0 });
 
 /** Registers the service worker and offers a reload when a new version is waiting. */
 function registerServiceWorker() {

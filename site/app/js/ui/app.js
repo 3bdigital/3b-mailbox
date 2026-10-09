@@ -73,6 +73,27 @@ export function createDemoAuth() {
 }
 
 /**
+ * Demo data, padded with made-up filters up to `size` (for trying a full account of 1,000).
+ * @param {number} size
+ */
+export function bigDemo(size) {
+  const data = demoData();
+  const labels = data.labels.filter((l) => l.type === 'user').map((l) => l.id);
+  const words = ['news', 'offers', 'billing', 'alerts', 'team', 'hello', 'support', 'updates'];
+  for (let i = data.filters.length; i < Math.min(size, 1000); i++) {
+    data.filters.push({
+      id: `ANdemo${String(i).padStart(5, '0')}`,
+      criteria: { from: `${words[i % words.length]}@shop${i}.example.com` },
+      action: {
+        addLabelIds: [labels[i % labels.length]],
+        ...(i % 3 === 0 ? { removeLabelIds: ['INBOX'] } : {}),
+      },
+    });
+  }
+  return data;
+}
+
+/**
  * Applies the appearance preferences to <html>.
  * @param {import('../core/storage.js').Store} prefs
  */
@@ -91,7 +112,7 @@ export function applyAppearance(prefs) {
 
 /**
  * Starts the app.
- * @param {{demo: boolean, store?: import('../core/storage.js').Store}} opts
+ * @param {{demo: boolean, demoSize?: number, store?: import('../core/storage.js').Store}} opts
  */
 export function startApp(opts) {
   const prefs = opts.store ?? createStore();
@@ -114,7 +135,7 @@ export function startApp(opts) {
   let api = null;
   if (demo) {
     auth = createDemoAuth();
-    api = createMockGmail({ ...demoData(), latencyMs: 150 });
+    api = createMockGmail({ ...bigDemo(opts.demoSize ?? 0), latencyMs: 150 });
   } else if (mode === 'google') {
     auth = createAuth({ clientId });
     api = createGmailClient({ getToken: () => auth.getToken() });
@@ -230,6 +251,10 @@ export function startApp(opts) {
     if (redirect) {
       router.navigate(`#/${redirect}`, { replace: true });
       return;
+    }
+    // A new page closes dialogs that belong to the old one. A running change keeps its dialog.
+    for (const d of document.querySelectorAll('dialog[open][data-dismissable="true"]')) {
+      /** @type {HTMLDialogElement} */ (d).close();
     }
     currentView?.destroy?.();
     const view = VIEWS[name];
