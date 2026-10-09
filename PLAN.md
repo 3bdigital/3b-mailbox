@@ -206,7 +206,7 @@ No server storage. Recommendation: `localStorage` plus "export settings as a JSO
 ## 12. Decisions (Jack, 2026-10-09)
 
 1. Access: bring your own client ID only. It works on the maintainer's hosted copy and on self-hosted copies.
-2. No offline XML mode. (XML export stays as a backup format.)
+2. ~~No offline XML mode.~~ Replaced by decision 12.
 3. Promo site and app on one site, minimum pages: `index.html` (landing, setup guide, privacy, accessibility) and `app/`.
 4. Own design system (CSS tokens and native HTML). No component library.
 5. Matching-mail preview: yes, as an opt-in permission tier. The app explains each tier and asks Google for the extra scope only when the user turns the feature on. Tiers: basic (filters, labels, forwarding list), preview (adds `gmail.readonly`), apply to existing mail (adds `gmail.modify`). Verified: `gmail.metadata` cannot use the `q` search parameter, so preview needs `gmail.readonly`.
@@ -216,6 +216,12 @@ No server storage. Recommendation: `localStorage` plus "export settings as a JSO
 9. Templates: full catalogue, researched best practice (docs/TEMPLATES.md).
 10. Test data sized for about 60 filters with about 10 forwarding filters.
 11. Build all phases now. Deploy only when Jack says so (the Pages workflow is manual).
+
+Update (Jack, 2026-10-09, after reading Chrome Web Store reviews of a similar extension that uses one shared, unverified client):
+
+12. Add a no-sign-in mode: export `mailFilters.xml` from Gmail, edit in the app, download, delete old filters in Gmail, import. No warning screen, no setup, no permissions. This replaces decision 2.
+13. No Google verification and no CASA assessment. Bring-your-own client ID stays (personal-use exception; no server, so no assessment would apply anyway). No Chrome extension with a shared client ID for now.
+14. First goal: get it working for Jack. Do not lock in: the app works at any origin (custom subdomain, apex domain, github.io, local). Hosting on GitHub Pages under a custom domain or subdomain owned by 3B Digital, chosen before anyone else makes a client ID.
 
 ## 13. Further ideas
 
