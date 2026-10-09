@@ -31,7 +31,7 @@ You can use 3B Mailbox with Google sign-in or without it.
 
 You can run the app in three ways:
 
-1. **Use the hosted copy.** Add the hosted copy's origin to your client ID, open the app and paste your client ID. The hosted copy is not live yet.
+1. **Use the hosted copy.** Add the hosted copy's origin to your client ID, open the app and paste your client ID. The hosted copy will live at `https://mailbox.3bweb.com` (not live yet).
 2. **Host your own copy.** Publish the `site/` folder on any static host that serves HTTPS (Cloudflare Workers, Cloudflare Pages, GitHub Pages, Netlify, a home server). Every link in the app is relative, so it works at any address: a custom domain or subdomain, a path on a shared host, or `localhost`. For sign-in, give it its own origin, for example `https://filters.example.com`, because sites that share an origin share browser storage.
 3. **Run it on your computer.**
 
@@ -146,12 +146,12 @@ The hosted copy runs on Cloudflare as the Worker `3b-mailbox-worker`. It serves 
 
 Deploys are manual. In GitHub, open Actions, then **Deploy to Cloudflare**, then **Run workflow**. The workflow runs every check and test first. It needs two repository secrets:
 
-- `CLOUDFLARE_API_TOKEN`: an API token with the **Workers Scripts: Edit** permission for the 3B Digital account.
+- `CLOUDFLARE_API_TOKEN`: an API token made from the **Edit Cloudflare Workers** template, limited to the 3B Digital account and the `3bweb.com` zone.
 - `CLOUDFLARE_ACCOUNT_ID`: the account ID from the Cloudflare dashboard.
 
 To deploy from your computer instead: `npx wrangler@4 deploy`. To try the Cloudflare set-up locally: `npx wrangler@4 dev`.
 
-Before anyone makes a client ID, add the custom domain in `wrangler.jsonc` (`routes`). Do not turn on Cloudflare Web Analytics or other features that add scripts to pages; the privacy policy says there are none.
+The hosted copy lives at `https://mailbox.3bweb.com` (set in `wrangler.jsonc`, `routes`). Google client IDs list that origin, so do not change it. Do not turn on Cloudflare Web Analytics or other features that add scripts to pages; the privacy policy says there are none.
 
 ## Contributing
 

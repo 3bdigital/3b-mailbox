@@ -36,3 +36,11 @@ describe('site/_headers', () => {
     expect(headers).toMatch(/\/app\/sw\.js\n\s+Cache-Control: no-cache/);
   });
 });
+
+describe('custom domain', () => {
+  it('serves the hosted copy only at mailbox.3bweb.com', () => {
+    const text = read('wrangler.jsonc');
+    expect(text).toContain('"pattern": "mailbox.3bweb.com", "custom_domain": true');
+    expect(text).toContain('"workers_dev": false');
+  });
+});

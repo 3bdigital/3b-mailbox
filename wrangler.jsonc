@@ -9,9 +9,8 @@
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
   },
-  "workers_dev": true,
+  // One public address only. Google sign-in client IDs list this origin, so do not change it.
+  "workers_dev": false,
   "preview_urls": false,
-  // Add the custom domain when it is chosen. Google sign-in needs one fixed origin, so pick it
-  // before anyone creates a client ID.
-  // "routes": [{ "pattern": "mailbox.example.com", "custom_domain": true }],
+  "routes": [{ "pattern": "mailbox.3bweb.com", "custom_domain": true }],
 }
