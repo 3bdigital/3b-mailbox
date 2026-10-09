@@ -308,9 +308,12 @@ export function createGmailClient(options) {
       }
 
       const { reason, detail } = await readError(res);
-      const retryable =
-        RETRY_STATUSES.includes(res.status) ||
-        (res.status === 403 && RATE_LIMIT_REASONS.includes(reason));
+      // 429 and rate-limit 403s mean Gmail did nothing, so any method can retry.
+      // A 5xx on a write may have been applied, so only GETs retry it here.
+      // createFilter and deleteFilter check the real state before they try again.
+      const rateLimited =
+        res.status === 429 || (res.status === 403 && RATE_LIMIT_REASONS.includes(reason));
+      const retryable = rateLimited || (idempotent && RETRY_STATUSES.includes(res.status));
       if (retryable && attempt < maxAttempts) {
         const after = parseRetryAfter(res.headers?.get?.('Retry-After'), now());
         const wait =
@@ -355,7 +358,7 @@ export function createGmailClient(options) {
     return ids;
   }
 
-  return {
+  const api = {
     request,
 
     async listFilters() {
@@ -366,11 +369,26 @@ export function createGmailClient(options) {
 
     async createFilter(filter) {
       const body = { criteria: filter.criteria ?? {}, action: filter.action ?? {} };
-      return request('POST', 'settings/filters', { body });
+      try {
+        return await request('POST', 'settings/filters', { body });
+      } catch (err) {
+        if (!isServerError(err)) throw err;
+        // The create may have worked. Look before trying again, so we never make a duplicate.
+        const existing = (await api.listFilters()).find((f) => sameFilter(f, body));
+        if (existing) return existing;
+        return request('POST', 'settings/filters', { body });
+      }
     },
 
     async deleteFilter(id) {
-      await request('DELETE', `settings/filters/${encodeURIComponent(id)}`);
+      const path = `settings/filters/${encodeURIComponent(id)}`;
+      try {
+        await request('DELETE', path);
+      } catch (err) {
+        if (!isServerError(err)) throw err;
+        const stillThere = (await api.listFilters()).some((f) => f.id === id);
+        if (stillThere) await request('DELETE', path);
+      }
     },
 
     async listLabels() {
@@ -426,4 +444,28 @@ export function createGmailClient(options) {
       return done;
     },
   };
+  return api;
+}
+
+/** @param {unknown} err */
+function isServerError(err) {
+  return err instanceof GmailError && err.status >= 500;
+}
+
+/** Order-independent comparison of the parts Gmail stores. */
+function sameFilter(a, b) {
+  return (
+    canonical(a.criteria) === canonical(b.criteria) && canonical(a.action) === canonical(b.action)
+  );
+}
+
+function canonical(value) {
+  if (Array.isArray(value)) return JSON.stringify([...value].map(canonical).sort());
+  if (value && typeof value === 'object') {
+    const keys = Object.keys(value)
+      .filter((k) => value[k] !== undefined && !(Array.isArray(value[k]) && value[k].length === 0))
+      .sort();
+    return JSON.stringify(keys.map((k) => [k, canonical(value[k])]));
+  }
+  return JSON.stringify(value);
 }

@@ -487,3 +487,60 @@ describe('request helper', () => {
     expect(calls[0].url).toBe(`${API_BASE}/messages?b=1&b=2&c=3`);
   });
 });
+
+describe('safe retries for writes', () => {
+  const filter = { criteria: { from: 'a@example.com' }, action: { addLabelIds: ['Label_1'] } };
+
+  it('does not retry a POST after a 5xx when the filter now exists', async () => {
+    const { api, calls } = client([
+      apiError(503, 'Backend Error', 'backendError'),
+      json(200, {
+        filter: [
+          { id: 'f9', criteria: { from: 'a@example.com' }, action: { addLabelIds: ['Label_1'] } },
+        ],
+      }),
+    ]);
+    expect(await api.createFilter(filter)).toMatchObject({ id: 'f9' });
+    expect(calls.map((c) => c.init.method)).toEqual(['POST', 'GET']);
+  });
+
+  it('retries a POST once after a 5xx when the filter does not exist', async () => {
+    const { api, calls } = client([
+      apiError(500, 'Backend Error', 'backendError'),
+      json(200, {}),
+      json(200, { id: 'f10', ...filter }),
+    ]);
+    expect(await api.createFilter(filter)).toMatchObject({ id: 'f10' });
+    expect(calls.map((c) => c.init.method)).toEqual(['POST', 'GET', 'POST']);
+  });
+
+  it('retries a POST after 429 without checking first', async () => {
+    const { api, calls } = client([
+      apiError(429, 'Too many', 'rateLimitExceeded'),
+      json(200, { id: 'f11', ...filter }),
+    ]);
+    expect(await api.createFilter(filter)).toMatchObject({ id: 'f11' });
+    expect(calls.map((c) => c.init.method)).toEqual(['POST', 'POST']);
+  });
+
+  it('treats a DELETE 5xx as done when the filter is gone', async () => {
+    const { api, calls } = client([apiError(502, 'Bad gateway'), json(200, {})]);
+    await api.deleteFilter('f1');
+    expect(calls.map((c) => c.init.method)).toEqual(['DELETE', 'GET']);
+  });
+
+  it('deletes again after a 5xx when the filter is still there', async () => {
+    const { api, calls } = client([
+      apiError(502, 'Bad gateway'),
+      json(200, { filter: [{ id: 'f1', criteria: {}, action: {} }] }),
+      new Response(null, { status: 204 }),
+    ]);
+    await api.deleteFilter('f1');
+    expect(calls.map((c) => c.init.method)).toEqual(['DELETE', 'GET', 'DELETE']);
+  });
+
+  it('passes on 4xx errors from writes unchanged', async () => {
+    const { api } = client([apiError(400, 'Filter already exists', 'failedPrecondition')]);
+    await expect(api.createFilter(filter)).rejects.toBeInstanceOf(GmailError);
+  });
+});
