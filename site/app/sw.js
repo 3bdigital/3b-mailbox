@@ -1,7 +1,7 @@
 // Service worker: caches the app shell only. It never caches or touches Google requests
 // (googleapis.com, accounts.google.com) or any other origin. Change VERSION on every release.
 
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CACHE = `email-filter-shell-${VERSION}`;
 
 /** Every file of the app shell, relative to this file. tests/unit/ui/sw.test.js checks the list. */
@@ -35,6 +35,7 @@ const SHELL = [
   'js/gmail/client.js',
   'js/gmail/demo-data.js',
   'js/gmail/executor.js',
+  'js/gmail/file-source.js',
   'js/gmail/mock.js',
   'js/ui/app.js',
   'js/ui/dom.js',
@@ -44,6 +45,7 @@ const SHELL = [
   'js/ui/state.js',
   'js/ui/components/combobox.js',
   'js/ui/components/dialog.js',
+  'js/ui/components/download.js',
   'js/ui/components/filter-card.js',
   'js/ui/components/label-picker.js',
   'js/ui/components/matches.js',

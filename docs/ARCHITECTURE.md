@@ -112,6 +112,8 @@ Gmail search syntax parser and serialiser.
 - `toJson(filters, labels): string`: versioned backup `{app:'email-filter', version:1, exportedAt, filters, labels}`.
 - `fromJson(text): {filters, labels}` with validation (throws `BackupError` with a plain message).
 - `toGmailXml(filters, labelsById, opts?: {now, author})`: Gmail `mailFilters.xml` format, for import in Gmail's own settings. Gmail XML has one `label` property per entry, so a filter with several labels becomes several entries with the same criteria (the first has the other actions too). Sizes are written in bytes (`sizeUnit` `s_sb`).
+- `fromGmailXml(text): {filters, labelNames, forwardAddresses, warnings}`: reads Gmail's exported `mailFilters.xml` with no DOMParser (runs in Node and the browser). Each `<entry>` becomes one filter, as in Gmail. Labels are names in the file, so a label becomes the placeholder ID `new:<name>`. Sizes are converted to bytes (`s_sb`, `s_skb`, `s_smb`; 1 KB = 1,024 bytes). Smart labels map to `CATEGORY_*`. Unknown properties, entries with no criteria or no known action, and guessed sizes go into `warnings`. Throws `BackupError` for a file that is not a Gmail filter feed, has no filters, is damaged, is over 5 MB or has over 2,000 entries (`XML_LIMITS`).
+- `xmlDecode(s)`: the five XML entities plus decimal and hex character references.
 
 ### core/storage.js
 
@@ -139,6 +141,15 @@ Gmail search syntax parser and serialiser.
 - `searchMessages` uses `messages.list?q=` then `messages.get?format=metadata&metadataHeaders=From,Subject,Date`.
 - `applyToExisting` pages through `messages.list` and calls `messages.batchModify` in chunks of 1000.
 
+### gmail/file-source.js
+
+No sign-in mode. The user opens the `mailFilters.xml` that Gmail exports.
+
+- `seedFromFile(parsed)`: user labels `Label_1..n` from `labelNames` (nested names keep "/"), `new:<name>` placeholders swapped for those IDs, every `forwardTo` address as an `accepted` forwarding address (the filters worked in Gmail).
+- `createFileGmail(parsed)`: `createMockGmail` seeded with that data and no messages. `searchMessages` and `applyToExisting` reject with `NEEDS_SIGN_IN`.
+- `createFileAuth()`: only the `basic` tier; `upgrade` rejects.
+- `contentKey(filters, labelsById)`: order-free key of what the filters do (no IDs, label names). The app compares it with the key at the last download to set `fileDirty`.
+
 ### gmail/executor.js
 
 - `runPlan(plan, api: GmailApi, {onProgress?, journal?, signal?}): Promise<{done: number, failed: PlanStep|null, error: Error|null, created: Filter[]}>`
@@ -153,14 +164,15 @@ Gmail search syntax parser and serialiser.
 ## ui/ (DOM)
 
 - `ui/router.js`: hash routes `#/overview`, `#/filters`, `#/filters/new`, `#/filters/:id`, `#/suggestions`, `#/tidy`, `#/settings`, `#/setup`.
-- `ui/state.js`: small store (`getState`, `setState`, `subscribe`) holding filters, labels, forwarding addresses, selection, issues, auth status.
+- `ui/state.js`: small store (`getState`, `setState`, `subscribe`) holding filters, labels, forwarding addresses, selection, issues, auth status, and in no sign-in mode `fileDirty` and `fileName`.
 - One module per view in `ui/views/`. Shared components in `ui/components/` (dialog, toast, confirm, meter, filter-card, label-picker, query-editor, plan-preview, progress).
-- `main.js` picks the API: `?demo` or "Try the demo" uses `createMockGmail(demoData())`; otherwise `createGmailClient` with `createAuth`.
+- `main.js` picks the API: `?demo` or "Try the demo" uses `createMockGmail(demoData())`; otherwise `createGmailClient` with `createAuth`. Opening a `mailFilters.xml` on the setup page calls `ctx.openFile`, which switches `ctx.mode` to `'file'` (no sign-in mode) with `createFileGmail`, `createFileAuth` and an in-memory journal. In that mode a banner offers "Download for Gmail" (`ui/components/download.js`), a `beforeunload` guard warns about changes that are not downloaded, and matching mail, apply to existing mail, permissions, client ID and the length probe show "Needs Google sign-in."
+- All URLs are relative, so the site works at any origin and path.
 
 ## Rules for all code
 
 - No runtime dependencies. Dev dependencies only.
 - JSDoc types on every export. `// @ts-check` at the top of core and gmail files.
-- No network calls except `accounts.google.com` (sign-in script) and `gmail.googleapis.com`.
+- No network calls except `accounts.google.com` (sign-in script) and `gmail.googleapis.com`. In demo and no sign-in mode, none at all apart from the app's own files.
 - Never store the access token. Never log message content.
 - Plain English in every user-facing string (ASD-STE100 style: short sentences, active voice).

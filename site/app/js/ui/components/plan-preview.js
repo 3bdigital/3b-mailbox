@@ -253,7 +253,11 @@ export function reviewAndRun(ctx, plan, opts = {}) {
 
   const d = openDialog({
     title: plan.title,
-    description: opts.intro ?? 'Check the changes. Nothing changes in Gmail until you confirm.',
+    description:
+      opts.intro ??
+      (ctx.mode === 'file'
+        ? 'Check the changes. Nothing changes until you confirm. Gmail changes only when you import the new file.'
+        : 'Check the changes. Nothing changes in Gmail until you confirm.'),
     size: 'lg',
     initialFocus: 'heading',
     content: [
@@ -353,7 +357,12 @@ export function reviewAndRun(ctx, plan, opts = {}) {
       h(
         'div',
         { class: 'run' },
-        h('p', { text: 'Making the changes in Gmail. Keep this page open.' }),
+        h('p', {
+          text:
+            ctx.mode === 'file'
+              ? 'Making the changes. Keep this page open.'
+              : 'Making the changes in Gmail. Keep this page open.',
+        }),
         progress,
         live,
       ),
@@ -435,6 +444,10 @@ export function reviewAndRun(ctx, plan, opts = {}) {
             h('p', { class: 'result-title', text: `${current.title}: done.` }),
             h('p', { text: `You now have ${plural(count, 'filter')}.` }),
             afterText && h('p', { text: afterText }),
+            ctx.mode === 'file' &&
+              h('p', {
+                text: 'Gmail does not change until you download the new file and import it.',
+              }),
             canUndo &&
               h('p', {
                 class: 'muted',

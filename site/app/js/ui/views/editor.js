@@ -13,6 +13,7 @@ import {
 } from '../../core/limits.js';
 import { findUnsafeOperators } from '../../core/query.js';
 import { describeFilter } from '../../core/summarise.js';
+import { NEEDS_SIGN_IN } from '../../gmail/file-source.js';
 import { labelPicker } from '../components/label-picker.js';
 import { showMatches } from '../components/matches.js';
 import { ensureTier } from '../components/permission.js';
@@ -450,10 +451,15 @@ function editorForm(ctx, s, o) {
 
   // ---- Apply to existing mail
   const applyStatus = h('p', { class: 'field-hint', role: 'status' });
+  const noSignIn = ctx.mode === 'file';
+  if (noSignIn) draft.applyExisting = false;
   const apply = checkbox({
     label: 'Also apply to existing mail',
     checked: draft.applyExisting,
-    hint: 'Gmail filters only act on new mail. Tick this to also label the mail you have now. This needs an extra permission. Delete and forward only act on new mail.',
+    disabled: noSignIn,
+    hint: noSignIn
+      ? NEEDS_SIGN_IN
+      : 'Gmail filters only act on new mail. Tick this to also label the mail you have now. This needs an extra permission. Delete and forward only act on new mail.',
     onChange: async (v) => {
       if (v) {
         const ok = await ensureTier(ctx, 'apply', {
@@ -755,8 +761,12 @@ function editorForm(ctx, s, o) {
             button({
               label: 'Show matching mail',
               icon: 'mail',
+              disabled: noSignIn,
+              describedBy: noSignIn ? `matches-why-${key}` : undefined,
               onClick: () => showMatches(ctx, draftCriteria(draft)),
             }),
+            noSignIn &&
+              h('span', { id: `matches-why-${key}`, class: 'needs-sign-in', text: NEEDS_SIGN_IN }),
           ),
         ),
         h(

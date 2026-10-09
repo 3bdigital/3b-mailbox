@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8'?><feed xmlns='http://www.w3.org/2005/Atom' xmlns:apps='http://schemas.google.com/apps/2006'>
+	<title>Mail Filters</title>
+	<id>tag:mail.google.com,2008:filters:z0000001696000000001*4826351840128731001,z0000001696000000002*4826351840128731002,z0000001696000000003*4826351840128731003,z0000001696000000004*4826351840128731004,z0000001696000000005*4826351840128731005,z0000001696000000006*4826351840128731006,z0000001696000000007*4826351840128731007,z0000001696000000008*4826351840128731008,z0000001696000000009*4826351840128731009,z0000001696000000010*4826351840128731010,z0000001696000000011*4826351840128731011,z0000001696000000012*4826351840128731012</id>
+	<updated>2026-10-01T09:12:44Z</updated>
+	<author>
+		<name>Sam Example</name>
+		<email>sam.example@gmail.com</email>
+	</author>
+	<entry>
+		<category term='filter'></category>
+		<title>Mail Filter</title>
+		<id>tag:mail.google.com,2008:filter:z0000001696000000001*4826351840128731001</id>
+		<updated>2026-10-01T09:12:44Z</updated>
+		<content></content>
+		<apps:property name='from' value='auto-confirm@amazon.co.uk'/>
+		<apps:property name='label' value='Shopping/Receipts'/>
+		<apps:property name='shouldArchive' value='true'/>
+		<apps:property name='sizeOperator' value='s_sl'/>
+		<apps:property name='sizeUnit' value='s_smb'/>
+	</entry>
+	<entry>
+		<category term='filter'></category>
+		<title>Mail Filter</title>
+		<id>tag:mail.google.com,2008:filter:z0000001696000000002*4826351840128731002</id>
+		<updated>2026-10-01T09:12:44Z</updated>
+		<content></content>
+		<apps:property name='from' value='ebay.co.uk'/>
+		<apps:property name='label' value='Shopping/Receipts'/>
+		<apps:property name='sizeOperator' value='s_sl'/>
+		<apps:property name='sizeUnit' value='s_smb'/>
+	</entry>
+	<entry>
+		<category term='filter'></category>
+		<title>Mail Filter</title>
+		<id>tag:mail.google.com,2008:filter:z0000001696000000003*4826351840128731003</id>
+		<updated>2026-10-01T09:12:44Z</updated>
+		<content></content>
+		<apps:property name='hasTheWord' value='subject:(invoice OR receipt OR &quot;order confirmation&quot;)'/>
+		<apps:property name='doesNotHaveTheWord' value='from:me'/>
+		<apps:property name='label' value='Money &amp; Bills'/>
+		<apps:property name='shouldNeverSpam' value='true'/>
+		<apps:property name='sizeOperator' value='s_sl'/>
+		<apps:property name='sizeUnit' value='s_smb'/>
+	</entry>
+	<entry>
+		<category term='filter'></category>
+		<title>Mail Filter</title>
+		<id>tag:mail.google.com,2008:filter:z0000001696000000004*4826351840128731004</id>
+		<updated>2026-10-01T09:12:44Z</updated>
+		<content></content>
+		<apps:property name='hasTheWord' value='list:(&lt;news.example.org&gt;)'/>
+		<apps:property name='shouldArchive' value='true'/>
+		<apps:property name='shouldMarkAsRead' value='true'/>
+		<apps:property name='smartLabelToApply' value='^smartlabel_promo'/>
+		<apps:property name='sizeOperator' value='s_sl'/>
+		<apps:property name='sizeUnit' value='s_smb'/>
+	</entry>
+	<entry>
+		<category term='filter'></category>
+		<title>Mail Filter</title>
+		<id>tag:mail.google.com,2008:filter:z0000001696000000005*4826351840128731005</id>
+		<updated>2026-10-01T09:12:44Z</updated>
+		<content></content>
+		<apps:property name='from' value='boss@work.example.com'/>
+		<apps:property name='shouldStar' value='true'/>
+		<apps:property name='shouldAlwaysMarkAsImportant' value='true'/>
+		<apps:property name='sizeOperator' value='s_sl'/>
+		<apps:property name='sizeUnit' value='s_smb'/>
+	</entry>
+	<entry>
+		<category term='filter'></category>
+		<title>Mail Filter</title>
+		<id>tag:mail.google.com,2008:filter:z0000001696000000006*4826351840128731006</id>
+		<updated>2026-10-01T09:12:44Z</updated>
+		<content></content>
+		<apps:property name='from' value='facebookmail.com'/>
+		<apps:property name='shouldNeverMarkAsImportant' value='true'/>
+		<apps:property name='smartLabelToApply' value='^smartlabel_social'/>
+		<apps:property name='sizeOperator' value='s_sl'/>
+		<apps:property name='sizeUnit' value='s_smb'/>
+	</entry>
+	<entry>
+		<category term='filter'></category>
+		<title>Mail Filter</title>
+		<id>tag:mail.google.com,2008:filter:z0000001696000000007*4826351840128731007</id>
+		<updated>2026-10-01T09:12:44Z</updated>
+		<content></content>
+		<apps:property name='from' value='prizes@lottery-winner.example'/>
+		<apps:property name='shouldTrash' value='true'/>
+		<apps:property name='sizeOperator' value='s_sl'/>
+		<apps:property name='sizeUnit' value='s_smb'/>
+	</entry>
+	<entry>
+		<category term='filter'></category>
+		<title>Mail Filter</title>
+		<id>tag:mail.google.com,2008:filter:z0000001696000000008*4826351840128731008</id>
+		<updated>2026-10-01T09:12:44Z</updated>
+		<content></content>
+		<apps:property name='to' value='sam.example+bank@gmail.com'/>
+		<apps:property name='subject' value='Your statement is ready'/>
+		<apps:property name='label' value='Money &amp; Bills/Statements'/>
+		<apps:property name='forwardTo' value='partner@example.net'/>
+		<apps:property name='sizeOperator' value='s_sl'/>
+		<apps:property name='sizeUnit' value='s_smb'/>
+	</entry>
+	<entry>
+		<category term='filter'></category>
+		<title>Mail Filter</title>
+		<id>tag:mail.google.com,2008:filter:z0000001696000000009*4826351840128731009</id>
+		<updated>2026-10-01T09:12:44Z</updated>
+		<content></content>
+		<apps:property name='hasTheWord' value='has:attachment filename:pdf'/>
+		<apps:property name='hasAttachment' value='true'/>
+		<apps:property name='excludeChats' value='true'/>
+		<apps:property name='label' value='Documents'/>
+		<apps:property name='size' value='5'/>
+		<apps:property name='sizeOperator' value='s_sl'/>
+		<apps:property name='sizeUnit' value='s_smb'/>
+	</entry>
+	<entry>
+		<category term='filter'></category>
+		<title>Mail Filter</title>
+		<id>tag:mail.google.com,2008:filter:z0000001696000000010*4826351840128731010</id>
+		<updated>2026-10-01T09:12:44Z</updated>
+		<content></content>
+		<apps:property name='from' value='alerts@monitoring.example.com'/>
+		<apps:property name='label' value='Work/Alerts'/>
+		<apps:property name='size' value='200'/>
+		<apps:property name='sizeOperator' value='s_ss'/>
+		<apps:property name='sizeUnit' value='s_skb'/>
+	</entry>
+	<entry>
+		<category term='filter'></category>
+		<title>Mail Filter</title>
+		<id>tag:mail.google.com,2008:filter:z0000001696000000011*4826351840128731011</id>
+		<updated>2026-10-01T09:12:44Z</updated>
+		<content></content>
+		<apps:property name='from' value='github.com'/>
+		<apps:property name='label' value='Work/GitHub'/>
+		<apps:property name='smartLabelToApply' value='^smartlabel_notification'/>
+		<apps:property name='sizeOperator' value='s_sl'/>
+		<apps:property name='sizeUnit' value='s_smb'/>
+	</entry>
+	<entry>
+		<category term='filter'></category>
+		<title>Mail Filter</title>
+		<id>tag:mail.google.com,2008:filter:z0000001696000000012*4826351840128731012</id>
+		<updated>2026-10-01T09:12:44Z</updated>
+		<content></content>
+		<apps:property name='from' value='Caf&#233; Ren&#xE9; &lt;hello@cafe.example&gt;'/>
+		<apps:property name='label' value='Food &apos;n&apos; Drink'/>
+		<apps:property name='smartLabelToApply' value='^smartlabel_group'/>
+		<apps:property name='sizeOperator' value='s_sl'/>
+		<apps:property name='sizeUnit' value='s_smb'/>
+	</entry>
+</feed>

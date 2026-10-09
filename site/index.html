@@ -62,7 +62,9 @@
             </div>
             <p class="small">
               The demo uses made-up data. It does not connect to Google. To use your own Gmail,
-              <a href="#setup">set up your own client ID</a> first. This takes about 10 minutes.
+              <a href="#setup">set up your own client ID</a> first. This takes about 10 minutes. Or
+              <a href="#no-sign-in">use it without signing in</a>: export your filters from Gmail,
+              change them here, then import the new file.
             </p>
           </div>
 
@@ -158,6 +160,57 @@
                 The app knows the Gmail limits. It warns you at 80% and 95%, and it stops a change
                 that Gmail would refuse.
               </p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="no-sign-in" aria-labelledby="no-sign-in-title">
+        <div class="wrap reading prose">
+          <h2 id="no-sign-in-title">Use it without signing in</h2>
+          <p class="section-lead">
+            You do not need a Google Cloud client ID, and Google does not show an "unverified app"
+            warning. The app reads only the file you choose. Nothing leaves your browser.
+          </p>
+          <ol>
+            <li>
+              In Gmail, open <strong>Settings</strong>, then <strong>See all settings</strong>, then
+              <strong>Filters and blocked addresses</strong>. Select all your filters and choose
+              <strong>Export</strong>. Your browser saves a file called
+              <code>mailFilters.xml</code>.
+            </li>
+            <li>
+              <a href="app/#/setup">Open the setup page</a> and choose
+              <strong>Work without signing in</strong>. Choose the file, or drag it onto the page.
+            </li>
+            <li>
+              Use the app as normal: see your filters, tidy them up, make bulk changes, add
+              suggestions and undo.
+            </li>
+            <li>Choose <strong>Download for Gmail</strong> to save the new file.</li>
+            <li>
+              In Gmail, select all your filters and choose <strong>Delete</strong>. Then choose
+              <strong>Import filters</strong>, choose the new file, and choose
+              <strong>Create filters</strong>.
+            </li>
+          </ol>
+          <p>
+            Do step 5 in that order. Gmail import adds filters and never deletes them, so if you do
+            not delete the old filters first, you get two of each. Keep your original file as a
+            backup. If something goes wrong, import it again.
+          </p>
+          <h3>What you give up</h3>
+          <ul>
+            <li>The app cannot show the mail that a filter matches.</li>
+            <li>The app cannot apply a filter to mail you already have.</li>
+            <li>You delete and import your filters in Gmail yourself.</li>
+            <li>
+              Gmail matches labels by name and makes any label that is missing. Forwarding works
+              only to addresses you have already verified in Gmail.
+            </li>
+            <li>
+              Your changes stay in the browser tab until you download them. The app warns you before
+              you close or reload the tab with changes you have not downloaded.
             </li>
           </ul>
         </div>
@@ -508,6 +561,14 @@
               </p>
             </details>
             <details>
+              <summary>Can I use it without a client ID?</summary>
+              <p>
+                Yes. <a href="#no-sign-in">Use it without signing in</a>. You export your filters
+                from Gmail, change them in the app, then import the new file in Gmail. The app does
+                not contact Google at all in this mode.
+              </p>
+            </details>
+            <details>
               <summary>Can the maintainer see my mail or my filters?</summary>
               <p>
                 No. There is no server to send data to. The app loads no analytics, no fonts and no
@@ -582,8 +643,9 @@
           <h3>Summary</h3>
           <p>
             Email Filter runs fully in your browser. It sends your data only to Google, and only to
-            do what you ask. The maintainer receives no data about you. There is no server, no
-            account, no analytics, no cookies and no tracking.
+            do what you ask. In no sign-in mode it sends nothing at all. The maintainer receives no
+            data about you. There is no server, no account, no analytics, no cookies and no
+            tracking.
           </p>
 
           <h3>Who this policy covers</h3>
@@ -609,6 +671,13 @@
               the app can add or remove labels on them.
             </li>
           </ul>
+
+          <p>
+            <strong>No sign-in mode</strong>: the app reads only the <code>mailFilters.xml</code>
+            file you choose. It keeps the filters in the browser tab while you work. Nothing leaves
+            your browser, and the app does not contact Google. The file you download goes only to
+            your own device.
+          </p>
 
           <h3>Where the data goes</h3>
           <p>

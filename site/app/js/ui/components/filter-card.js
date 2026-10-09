@@ -68,6 +68,7 @@ export function lengthMeter(length) {
  * @property {boolean} selected
  * @property {(filter: Filter, checked: boolean, event: MouseEvent|Event) => void} onToggle
  * @property {(action: 'edit'|'duplicate'|'delete'|'matches', filter: Filter) => void} onAction
+ * @property {boolean} [noSignIn]       No sign-in mode: matching mail is not available.
  */
 
 /**
@@ -167,8 +168,11 @@ export function filterCard(filter, opts) {
           { label: 'Edit', icon: 'edit', onSelect: () => opts.onAction('edit', filter) },
           { label: 'Duplicate', icon: 'copy', onSelect: () => opts.onAction('duplicate', filter) },
           {
-            label: 'Show matching mail',
+            label: opts.noSignIn
+              ? 'Show matching mail (needs Google sign-in)'
+              : 'Show matching mail',
             icon: 'mail',
+            disabled: opts.noSignIn,
             onSelect: () => opts.onAction('matches', filter),
           },
           {
