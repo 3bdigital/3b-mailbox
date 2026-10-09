@@ -763,8 +763,8 @@ export function render(ctx) {
         button({ label: 'New filter', variant: 'primary', icon: 'plus', href: '#/filters/new' }),
       ],
     }),
-    gate.el,
     bulkBar,
+    gate.el,
   );
   return {
     el,

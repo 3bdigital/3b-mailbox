@@ -11,9 +11,12 @@ function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
   const local = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
   if (location.protocol !== 'https:' && !local) return;
+  // Reload only when a new version replaces an old one. On the first visit the worker takes
+  // control for the first time, and a reload then would throw away an opened file.
+  const hadController = Boolean(navigator.serviceWorker.controller);
   let reloading = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (reloading) return;
+    if (reloading || !hadController) return;
     reloading = true;
     location.reload();
   });
