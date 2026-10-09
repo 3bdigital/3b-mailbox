@@ -146,7 +146,9 @@ The hosted copy runs on Cloudflare as the Worker `3b-mailbox-worker`. It serves 
 
 Deploys are manual. In GitHub, open Actions, then **Deploy to Cloudflare**, then **Run workflow**. The workflow runs every check and test first. It needs two repository secrets:
 
-- `CLOUDFLARE_API_TOKEN`: an API token made from the **Edit Cloudflare Workers** template, limited to the 3B Digital account and the `3bweb.com` zone.
+- `CLOUDFLARE_API_TOKEN`: an **account-owned** API token on the 3B Digital account (Manage Account, then Account API Tokens). Least privilege:
+  - First deploy: Workers **Admin** at product scope (needed to create the Worker), plus Zone **Workers Routes: Write** on `3bweb.com` only (needed to attach the custom domain).
+  - After the first deploy: cut it down to Workers **Editor** scoped to `3b-mailbox-worker` only. Later deploys do not change the route, so they need nothing more.
 - `CLOUDFLARE_ACCOUNT_ID`: the account ID from the Cloudflare dashboard.
 
 To deploy from your computer instead: `npx wrangler@4 deploy`. To try the Cloudflare set-up locally: `npx wrangler@4 dev`.
