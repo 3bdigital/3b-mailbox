@@ -1,7 +1,7 @@
 // @ts-check
 // Backups: our own JSON format, and Gmail's mailFilters.xml format for import in Gmail settings.
 
-import { toFriendly } from './actions.js';
+import { toApi, toFriendly } from './actions.js';
 
 /** @typedef {import('../types.js').Filter} Filter */
 /** @typedef {import('../types.js').FilterCriteria} FilterCriteria */
@@ -298,4 +298,256 @@ export function toGmailXml(filters, labelsById, opts = {}) {
     '</feed>',
     '',
   ].join('\n');
+}
+
+/** Limits for reading a mailFilters.xml file. Gmail allows 1,000 filters, so these leave room. */
+export const XML_LIMITS = Object.freeze({ maxBytes: 5 * 1024 * 1024, maxEntries: 2000 });
+
+/** The ID prefix for a label known by name only. toGmailXml, templates and the executor know it. */
+export const NAME_PREFIX = 'new:';
+
+/** @type {Record<string, number>} */
+const SIZE_UNITS = { s_sb: 1, s_skb: 1024, s_smb: 1024 * 1024 };
+
+/** @type {Record<string, string>} */
+const CATEGORY_BY_SMART_LABEL = Object.fromEntries(
+  Object.entries(SMART_LABELS).map(([category, smart]) => [smart, category]),
+);
+
+/** @type {Record<string, string>} */
+const NAMED_ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" };
+
+const NOT_GMAIL =
+  'This is not a Gmail filter file. In Gmail, export your filters and choose the mailFilters.xml file.';
+
+/**
+ * Decodes the five XML entities and numeric character references. Anything else stays as it is.
+ * @param {string} s
+ * @returns {string}
+ */
+export function xmlDecode(s) {
+  return String(s).replace(/&(#[xX][0-9a-fA-F]+|#[0-9]+|[a-zA-Z]+);/g, (whole, ref) => {
+    if (ref[0] !== '#') return NAMED_ENTITIES[ref] ?? whole;
+    const code = /x/i.test(ref[1]) ? parseInt(ref.slice(2), 16) : Number(ref.slice(1));
+    if (!Number.isInteger(code) || code > 0x10ffff || (code >= 0xd800 && code <= 0xdfff)) {
+      return whole;
+    }
+    return String.fromCodePoint(code);
+  });
+}
+
+/**
+ * Reads the attributes of one tag, in either quote style.
+ * @param {string} text  The part of the tag after its name.
+ * @returns {Record<string, string>}
+ */
+function readAttributes(text) {
+  /** @type {Record<string, string>} */
+  const out = {};
+  const re = /([\w:.-]+)\s*=\s*(?:'([^']*)'|"([^"]*)")/g;
+  let m;
+  while ((m = re.exec(text))) out[m[1]] = xmlDecode(m[2] ?? m[3] ?? '');
+  return out;
+}
+
+/** @param {string} value */
+const isTrue = (value) => value.trim().toLowerCase() === 'true';
+
+/**
+ * @typedef {object} GmailXmlImport
+ * @property {Filter[]} filters        One filter per entry, as in Gmail. Labels use "new:<name>" IDs.
+ * @property {string[]} labelNames     Every label name used, in order of first use.
+ * @property {string[]} forwardAddresses  Every forwarding address used.
+ * @property {string[]} warnings       Plain English. Things that were left out or guessed.
+ */
+
+/**
+ * Reads Gmail's mailFilters.xml (Gmail settings, Filters and blocked addresses, Export).
+ * Each entry becomes one filter, as in Gmail. The file names labels, not IDs, so a label becomes
+ * the placeholder ID "new:<name>". Properties Email Filter does not know go into warnings.
+ * It does not use DOMParser, so it runs in Node and in the browser.
+ * @param {string} text
+ * @returns {GmailXmlImport}
+ * @throws {BackupError}
+ */
+export function fromGmailXml(text) {
+  if (typeof text !== 'string' || text.trim() === '') throw new BackupError('This file is empty.');
+  if (text.length > XML_LIMITS.maxBytes) {
+    throw new BackupError(
+      'This file is too big for a Gmail filter file. The limit is 5 MB. Check that you chose mailFilters.xml.',
+    );
+  }
+  const clean = text.replace(/^\uFEFF/, '').replace(/<!--[\s\S]*?-->/g, '');
+  if (!/^\s*(<\?xml[^>]*\?>\s*)?<feed\b[^>]*>/.test(clean) || !/<\/feed>\s*$/.test(clean)) {
+    throw new BackupError(NOT_GMAIL);
+  }
+  const entryCount = (clean.match(/<entry\b/g) ?? []).length;
+  if (entryCount > XML_LIMITS.maxEntries) {
+    throw new BackupError(
+      `This file has ${entryCount.toLocaleString('en-GB')} entries. Email Filter reads up to ${XML_LIMITS.maxEntries.toLocaleString('en-GB')}. Gmail allows 1,000 filters.`,
+    );
+  }
+  const entries = [...clean.matchAll(/<entry\b[^>]*>([\s\S]*?)<\/entry>/g)].map((m) => m[1]);
+  if (entries.length !== entryCount) {
+    throw new BackupError('This file is damaged. One of the filters in it is not complete.');
+  }
+  if (entries.length === 0) {
+    throw new BackupError(
+      'This file has no filters in it. In Gmail, select all your filters before you choose Export.',
+    );
+  }
+  if (!/<apps:property\b/.test(clean)) throw new BackupError(NOT_GMAIL);
+
+  /** @type {Filter[]} */
+  const filters = [];
+  /** @type {string[]} */
+  const labelNames = [];
+  /** @type {string[]} */
+  const forwardAddresses = [];
+  /** @type {string[]} */
+  const warnings = [];
+  const usedIds = new Set();
+
+  entries.forEach((body, i) => {
+    const n = i + 1;
+    const category = /<category\b([^>]*)>/.exec(body);
+    const term = category ? readAttributes(category[1]).term : undefined;
+    if (term !== undefined && term !== 'filter') {
+      warnings.push(`Entry ${n} is not a filter. It is left out.`);
+      return;
+    }
+    /** @type {Record<string, string>} */
+    const props = {};
+    const re = /<apps:property\b((?:\s+[\w:.-]+\s*=\s*(?:'[^']*'|"[^"]*"))*)\s*\/?>/g;
+    let m;
+    while ((m = re.exec(body))) {
+      const attrs = readAttributes(m[1]);
+      if (typeof attrs.name === 'string') props[attrs.name] = attrs.value ?? '';
+    }
+
+    /** @type {FilterCriteria} */
+    const criteria = {};
+    /** @type {Partial<import('../types.js').FriendlyAction>} */
+    const friendly = { labelIds: [] };
+    /** @type {string[]} */
+    const unknown = [];
+    for (const [name, raw] of Object.entries(props)) {
+      const value = raw.trim();
+      switch (name) {
+        case 'from':
+        case 'to':
+        case 'subject':
+          if (value) criteria[name] = value;
+          break;
+        case 'hasTheWord':
+          if (value) criteria.query = value;
+          break;
+        case 'doesNotHaveTheWord':
+          if (value) criteria.negatedQuery = value;
+          break;
+        case 'hasAttachment':
+        case 'excludeChats':
+          if (isTrue(value)) criteria[name] = true;
+          break;
+        case 'size':
+        case 'sizeOperator':
+        case 'sizeUnit':
+          break; // Read together below.
+        case 'label':
+          if (value) {
+            friendly.labelIds = [`${NAME_PREFIX}${value}`];
+            if (!labelNames.includes(value)) labelNames.push(value);
+          }
+          break;
+        case 'shouldArchive':
+          friendly.archive = isTrue(value);
+          break;
+        case 'shouldMarkAsRead':
+          friendly.markRead = isTrue(value);
+          break;
+        case 'shouldStar':
+          friendly.star = isTrue(value);
+          break;
+        case 'shouldTrash':
+          friendly.trash = isTrue(value);
+          break;
+        case 'shouldNeverSpam':
+          friendly.neverSpam = isTrue(value);
+          break;
+        case 'shouldAlwaysMarkAsImportant':
+          if (isTrue(value)) friendly.important = 'always';
+          break;
+        case 'shouldNeverMarkAsImportant':
+          if (isTrue(value) && friendly.important !== 'always') friendly.important = 'never';
+          break;
+        case 'smartLabelToApply':
+          if (CATEGORY_BY_SMART_LABEL[value]) {
+            friendly.category = /** @type {any} */ (CATEGORY_BY_SMART_LABEL[value]);
+          } else if (value) {
+            warnings.push(
+              `Filter ${n} puts mail in a category Email Filter does not know ("${value}"). The category is left out.`,
+            );
+          }
+          break;
+        case 'forwardTo':
+          if (value) {
+            friendly.forward = value;
+            if (!forwardAddresses.some((a) => a.toLowerCase() === value.toLowerCase())) {
+              forwardAddresses.push(value);
+            }
+          }
+          break;
+        default:
+          unknown.push(name);
+      }
+    }
+
+    if (props.size !== undefined && props.size.trim() !== '') {
+      const amount = Number(props.size.trim());
+      const unit = SIZE_UNITS[(props.sizeUnit ?? '').trim()];
+      const operator = (props.sizeOperator ?? '').trim();
+      if (!Number.isFinite(amount) || amount < 0) {
+        warnings.push(`Filter ${n} has a size that is not a number. The size is left out.`);
+      } else if (amount > 0) {
+        if (!unit) {
+          warnings.push(`Filter ${n} has a size with no unit. Email Filter reads it as bytes.`);
+        }
+        if (operator !== 's_sl' && operator !== 's_ss') {
+          warnings.push(
+            `Filter ${n} has a size but does not say larger or smaller. Email Filter reads it as larger.`,
+          );
+        }
+        criteria.size = Math.round(amount * (unit ?? 1));
+        criteria.sizeComparison = operator === 's_ss' ? 'smaller' : 'larger';
+      }
+    }
+
+    if (unknown.length) {
+      warnings.push(
+        `Filter ${n} uses ${unknown.map((u) => `"${u}"`).join(', ')}, which Email Filter does not know. ${unknown.length === 1 ? 'It is' : 'They are'} left out of the new file.`,
+      );
+    }
+    const action = toApi(friendly);
+    if (Object.keys(criteria).length === 0) {
+      warnings.push(`Filter ${n} has no search terms. It is left out.`);
+      return;
+    }
+    if (Object.keys(action).length === 0) {
+      warnings.push(`Filter ${n} has no action that Email Filter knows. It is left out.`);
+      return;
+    }
+    // Gmail IDs look like z0000001687000000000*1234567890123456. Keep them safe for HTML ids and URLs.
+    const idMatch = /<id>\s*tag:mail\.google\.com,2008:filter:([^<\s]{1,80})\s*<\/id>/.exec(body);
+    let id = idMatch ? idMatch[1].replace(/[^\w-]/g, '_') : `file${n}`;
+    while (usedIds.has(id)) id = `${id}-${n}`;
+    usedIds.add(id);
+    filters.push({ id, criteria, action });
+  });
+
+  if (filters.length === 0) {
+    throw new BackupError(
+      'Email Filter could not read any filters in this file. Check that you chose mailFilters.xml from Gmail.',
+    );
+  }
+  return { filters, labelNames, forwardAddresses, warnings };
 }
